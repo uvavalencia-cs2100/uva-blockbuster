@@ -8,16 +8,16 @@ public Customer(String name, String email) {
     setName(name);
     setEmail(email);
 }
-private void setName(String name) {
+public void setName(String name) {
     this.name = name;
 }
-private String getName() {
+public String getName() {
     return name;
 }
-private void setEmail(String email) {
+public void setEmail(String email) {
     this.email = email;
 }
-private String getEmail() {
+public String getEmail() {
     return email;
 }
 

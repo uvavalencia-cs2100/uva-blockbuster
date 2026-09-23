@@ -6,7 +6,9 @@ Java exercise. Everything runs in memory — there's no database.
 ## Requirements
 
 - JDK 21 or newer
-- Maven ([`brew install maven`](https://formulae.brew.sh/formula/maven) on macOS)
+- Maven:
+  - macOS: [`brew install maven`](https://formulae.brew.sh/formula/maven)
+  - Windows: `winget install Apache.Maven` (or [Chocolatey](https://chocolatey.org/packages/maven): `choco install maven`)
 
 ## Building
 
@@ -30,15 +32,6 @@ packaging a jar:
 ```sh
 mvn compile
 java -cp target/classes Main
-```
-
-## Project layout
-
-```
-src/main/java/
-├── Main.java          # entry point and menu navigation
-├── customer/          # Customer entity
-└── movie/              # Movie and MovieCopy entities
 ```
 
 ## CI

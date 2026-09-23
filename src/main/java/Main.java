@@ -1,74 +1,51 @@
-import java.util.Scanner;
-import customer.Customer;
-import movie.Movie;
+import java.util.List;
+
+import command.Command;
+import command.MenuRunner;
 
 public class Main {
-    
-    private static final Scanner scan = new Scanner(System.in);
-    
+        
     // Lists customer options and takes user input to navigate to the appropriate method
     public static void CustomerOptions() {
-        boolean running = true;
-        while (running) {
-            System.out.print("""
-                Customer Options:
-                1. Add new Customer (press n)
-                2. List Customers (press l)
-                3. Delete Customers (press d)
-                4. Back to Main Menu (press b)
-                5. Help (press h)
-                """);
-            
-            char input = scan.next().toLowerCase().charAt(0);
-            switch (input) {
-                case 'n' -> PlaceholderOption(); //Customer.newCustomer();
-                case 'l' -> PlaceholderOption(); //Customer.listCustomers();
-                case 'd' -> PlaceholderOption(); //Customer.deleteCustomer();
-                case 'b' -> running = false;
-                case 'h' -> HelpOptions();
-                default -> System.out.println("Invalid input. Please try again.");
-            }
-        }   
-    }
-    
-    // Unimplemented method for help options
-    public static void HelpOptions() {
+        Command add = new Command('a', "Add new Customer", MenuRunner::placeholder);
+        Command list = new Command('l', "List Customers", MenuRunner::placeholder);
+        Command delete = new Command('d', "Delete Customers", MenuRunner::placeholder);
         
-    }
-
-    public static void PlaceholderOption() {
+        List<Command> commands = List.of(add, list, delete, MenuRunner.BACK, MenuRunner.HELP);
         
+        MenuRunner.runMenu("Customer Options:", commands);
     }
 
-    public static void Quit() {
-        System.out.println("Thank you for using Blockbuster!");
-        System.exit(0);
+    // Lists movie options and takes user input to navigate to the appropriate method
+    public static void MovieOptions() {
+        Command add = new Command('a', "Add new Movie", MenuRunner::placeholder);
+        Command list = new Command('l', "List Movies", MenuRunner::placeholder);
+        Command delete = new Command('d', "Delete Movies", MenuRunner::placeholder);
+        
+        List<Command> commands = List.of(add, list, delete, MenuRunner.BACK, MenuRunner.HELP);
+        
+        MenuRunner.runMenu("Movie Options:", commands);
     }
 
+    // Lists movie options and takes user input to navigate to the appropriate method
+    public static void RentalOptions() {
+        Command rent = new Command('r', "Rent a Movie", MenuRunner::placeholder);
+        Command returnMovie = new Command('t', "Return a Movie", MenuRunner::placeholder);
+        Command list = new Command('l', "List Rentals", MenuRunner::placeholder);
+        
+        List<Command> commands = List.of(rent, returnMovie, list, MenuRunner.BACK, MenuRunner.HELP);
+        
+        MenuRunner.runMenu("Rental Options:", commands);
+    }
+
+    // Lists main menu options and takes user input to navigate to the appropriate method
     public static void main(String[] args) {
-        // Lists main menu options and takes user input to navigate to the appropriate method
-        while (true) {
-            System.out.print("""
-                Welcome to Blockbuster!
-                Available Options:
-                1. Customer Options (press c)
-                2. Movie Options (press m)
-                3. Rental Options (press r)
-                4. Quit (press q)
-                5. Help (press h)
-                """);
-            
-            char input = scan.next().toLowerCase().charAt(0);
-            
-            // Navigate to the appropriate method based on user input
-            switch (input) {
-                case 'c' -> CustomerOptions();
-                case 'm' -> PlaceholderOption(); //Movie.MovieOptions();
-                case 'r' -> PlaceholderOption(); //Rental.RentalOptions();
-                case 'q' -> Quit();
-                case 'h' -> HelpOptions();
-                default -> System.out.println("Invalid input. Please try again.");
-            }
-        }
+        Command customerOptions = new Command('c', "Customer Options", Main::CustomerOptions);
+        Command movieOptions = new Command('m', "Movie Options", Main::MovieOptions);
+        Command rentalOptions = new Command('r', "Rental Options", Main::RentalOptions);
+
+        List<Command> commands = List.of(customerOptions, movieOptions, rentalOptions, MenuRunner.QUIT, MenuRunner.HELP);
+        
+        MenuRunner.runMenu("Welcome to Blockbuster!", commands);
     }
 }

@@ -8,10 +8,17 @@ Java exercise. Everything runs in memory — there's no database.
 - JDK 21 or newer
 - Maven:
   - macOS: [`brew install maven`](https://formulae.brew.sh/formula/maven)
-  - Windows: [Chocolatey](https://chocolatey.org/packages/maven): `choco install maven`
-    (there's no official winget package yet; see the
-    [manual install instructions](https://maven.apache.org/install.html) if you'd
-    rather not use Chocolatey)
+  - Windows: no official winget package exists yet, and Chocolatey (`choco`)
+    isn't installed by default, so use the
+    [official manual install](https://maven.apache.org/install.html):
+    1. Download the binary zip from the
+       [Maven downloads page](https://maven.apache.org/download.cgi) and
+       extract it, e.g. to `C:\Program Files\Apache\maven`.
+    2. Add its `bin` folder to your `PATH` environment variable.
+    3. Open a new terminal and confirm with `mvn -v`.
+
+    If you already have [Chocolatey](https://chocolatey.org/install) set up,
+    `choco install maven` works too.
 
 ## Building
 

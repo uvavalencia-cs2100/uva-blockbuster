@@ -1,6 +1,6 @@
 import java.util.Scanner;
-import customer.Customer;
-import movie.Movie;
+
+import dataloader.DataLoader;
 
 public class Main {
     
@@ -47,6 +47,9 @@ public class Main {
 
     public static void main(String[] args) {
         // Lists main menu options and takes user input to navigate to the appropriate method
+        DataLoader.readFile("data/customers.csv", "Customer");
+        DataLoader.readFile("data/movies.csv", "Movie");
+        
         while (true) {
             System.out.print("""
                 Welcome to Blockbuster!

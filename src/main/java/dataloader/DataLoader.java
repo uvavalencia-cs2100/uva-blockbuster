@@ -5,8 +5,10 @@ import java.io.IOException;
 
 import customer.Customer;
 import movie.Movie;
+import inventory.Inventory;
 
 public class DataLoader {
+    
     public static void readFile(String path, String className) {
         boolean first = true;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -18,15 +20,14 @@ public class DataLoader {
                     continue;
                 }
                 String[] fields = line.split(",");
+                
                 switch (className) {
                     case "Customer" -> {
                         // Assuming fields are in the order: name, email, id
                         String name = fields[0];
                         String email = fields[1];
                         int id = Integer.parseInt(fields[2]);
-                        // Create a new Customer object
-                        Customer customer = new Customer(name, email, id);
-                        // You can add the customer to a list or perform other operations here
+                        Inventory.addCustomer(new Customer(name, email, id));
                     }
                     case "Movie" -> {
                         // Assuming fields are in the order: title, director, year, length, genre, rating
@@ -36,9 +37,7 @@ public class DataLoader {
                         int length = Integer.parseInt(fields[3]);
                         String genre = fields[4];
                         int rating = Integer.parseInt(fields[5]);
-                        // Create a new Movie object
-                        Movie movie = new Movie(title, director, year, length, genre, rating);
-                        // You can add the movie to a list or perform other operations here
+                        Inventory.addMovie(new Movie(title, director, year, length, genre, rating));
                     }
                     default -> System.out.println("Unknown class name: " + className);
                 }

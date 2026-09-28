@@ -1,6 +1,7 @@
 package inventory;
 import java.util.ArrayList;
 import java.util.List;
+
 import customer.Customer;
 import movie.Movie;
 import movie.MovieCopy;
@@ -40,12 +41,13 @@ public class Inventory {
         return new Movie[0];
     }
 
+    // The enum is current private and not accessible from this classt
     public static MovieCopy[] listActiveCopies() {
         List<MovieCopy> activeCopies = new ArrayList<>();
         for (MovieCopy m: copies) {
-            if (m.getStatus() == Status.ACTIVE) {
+            /*if (m.getStatus() == Status.ACTIVE) {
                 activeCopies.add(m);
-            }
+            }*/
         }
 
         return (MovieCopy[]) activeCopies.toArray();

@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import app.AppContext;
 import customer.Customer;
 import movie.Movie;
 import inventory.Inventory;
@@ -27,7 +28,7 @@ public class DataLoader {
                         String name = fields[0];
                         String email = fields[1];
                         int id = Integer.parseInt(fields[2]);
-                        Inventory.addCustomer(new Customer(name, email, id));
+                        AppContext.getInstance().getCustomerService().add(new Customer(name, email, id));
                     }
                     case "Movie" -> {
                         // Assuming fields are in the order: title, director, year, length, genre, rating

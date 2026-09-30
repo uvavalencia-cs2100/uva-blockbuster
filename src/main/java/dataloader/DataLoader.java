@@ -10,7 +10,7 @@ import inventory.Inventory;
 
 public class DataLoader {
     
-    public static void readFile(String path, String className) {
+    private static void readFile(String path, String className) {
         boolean first = true;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
@@ -24,21 +24,16 @@ public class DataLoader {
                 
                 switch (className) {
                     case "Customer" -> {
-                        // Assuming fields are in the order: name, email, id
-                        String name = fields[0];
-                        String email = fields[1];
-                        int id = Integer.parseInt(fields[2]);
-                        AppContext.getInstance().getCustomerService().add(new Customer(name, email, id));
+                        Customer c = Customer.fromCSVLine(line);
+                        if (c != null) {
+                            AppContext.getInstance().getCustomerService().add(c);
+                        }
                     }
                     case "Movie" -> {
-                        // Assuming fields are in the order: title, director, year, length, genre, rating
-                        String title = fields[0];
-                        String director = fields[1];
-                        int year = Integer.parseInt(fields[2]);
-                        int length = Integer.parseInt(fields[3]);
-                        String genre = fields[4];
-                        int rating = Integer.parseInt(fields[5]);
-                        Inventory.addMovie(new Movie(title, director, year, length, genre, rating));
+                        Movie m = Movie.fromCSVLine(line);
+                        if (m != null) {
+                            Inventory.addMovie(m);
+                        }
                     }
                     default -> System.out.println("Unknown class name: " + className);
                 }
@@ -46,5 +41,10 @@ public class DataLoader {
         } catch (IOException e) {
             System.out.println("Error reading file.");
         }
+    }
+
+    public static void loadData(String basePath) {
+        readFile(basePath + "/customers.csv", "Customer");
+        readFile(basePath + "/movies.csv", "Movie");
     }
 }

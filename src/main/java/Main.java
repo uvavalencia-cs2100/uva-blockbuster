@@ -43,8 +43,7 @@ public class Main {
     // Lists main menu options and takes user input to navigate to the appropriate method
     public static void main(String[] args) {
         // Lists main menu options and takes user input to navigate to the appropriate method
-        DataLoader.readFile("data/customers.csv", "Customer");
-        DataLoader.readFile("data/movies.csv", "Movie");
+        DataLoader.loadData("data");
 
         Command customerOptions = new Command('c', "Customer Options", Main::CustomerOptions);
         Command movieOptions = new Command('m', "Movie Options", Main::MovieOptions);

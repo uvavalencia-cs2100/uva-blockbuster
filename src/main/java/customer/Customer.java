@@ -43,6 +43,30 @@ public class Customer {
         this.email = email.trim();
     }
 
+    public static Customer fromCSVLine(String line) {
+        // Assuming fields are in the order: name, email, id
+        String[] fields = line.split(",");
+        if (fields.length != 3) {
+            System.out.println("CSV line must have exactly 3 fields");
+            return null;
+        }
+        String name = fields[0].trim();
+        String email = fields[1].trim();
+        int id;
+        try {
+            id = Integer.parseInt(fields[2].trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Id must be a valid integer");
+            return null;
+        }
+        return new Customer(name, email, id);
+    }
+
+    public String toCSVLine() {
+        // Assuming fields are in the order: name, email, id
+        return String.format("%s,%s,%d", getName(), getEmail(), getId());
+    }
+
     // Two customers are the same customer if they share an id
     @Override
     public boolean equals(Object object) {

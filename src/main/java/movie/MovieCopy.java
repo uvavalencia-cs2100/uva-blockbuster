@@ -1,23 +1,24 @@
 package movie;
 
+import store.Store;
+
 public class MovieCopy {
 
-    private final Movie movie; // a reference to the Movie it is a copy of
-    private static int nextId = 1; // can use for auto-incrementing copyId because static
+    private Movie movie; // a reference to the Movie it is a copy of
+    private static int NEXT_ID = 1; // can use for auto-incrementing copyId because static
     private final int copyId; // a unique copy id
-    private enum Status{AVAILABLE, RENTED, DAMAGED, LOST}; // an availability status 
-    private Status status;
+    private Store store; // a reference to the Store it belongs to 
 
-
+    
     // Constructor that takes a Movie and starts the copy as AVAILABLE.
-    public MovieCopy(Movie movie) {
+    public MovieCopy(Movie movie, Store store) {
         if (movie == null) {
             throw new IllegalArgumentException("Movie cannot be null");
         }
         
         this.movie = movie;
-        this.copyId = nextId++; // auto-increment copyId with static variable nextId
-        this.status = Status.AVAILABLE; // default status is AVAILABLE
+        this.copyId = NEXT_ID++; // auto-increment copyId with static variable NEXT_ID
+        this.store = store; // initialize store as null
     }
 
 
@@ -30,15 +31,8 @@ public class MovieCopy {
         return copyId;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-    // setter for availability status
-    public void setStatus(Status status) {
-        if (status == null) {
-            throw new IllegalArgumentException("Status cannot be null");
-        }
-        this.status = status;
+    public Store getStore() {
+        return store;
     }
 
 }

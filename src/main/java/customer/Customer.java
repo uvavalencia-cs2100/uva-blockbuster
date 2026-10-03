@@ -8,7 +8,7 @@ public class Customer {
     private String name;
     private String email;
 
-    public Customer(String name, String email, int id) {
+    public Customer(int id, String name, String email) {
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a positive integer");
         }
@@ -55,7 +55,7 @@ public class Customer {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Id must be a valid integer", e);
         }
-        return new Customer(fields[1].trim(), fields[2].trim(), id);
+        return new Customer(id, fields[1].trim(), fields[2].trim());
     }
 
     public static String toCSVLine(Customer customer) {

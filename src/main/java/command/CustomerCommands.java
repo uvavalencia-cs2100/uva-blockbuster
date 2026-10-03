@@ -21,7 +21,7 @@ public class CustomerCommands {
             String name = MenuRunner.prompt("Name: ");
             String email = MenuRunner.prompt("Email: ");
             int id = Integer.parseInt(MenuRunner.prompt("Id: "));
-            customerService().add(new Customer(name, email, id));
+            customerService().add(new Customer(id, name, email));
             System.out.println("Customer added.");
         } catch (NumberFormatException e) {
             System.out.println("Id must be a number.");

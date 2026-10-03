@@ -105,5 +105,31 @@ public class Movie {
         this.rating = rating;
     }
 
+    public static Movie fromCSVLine(String line) {
+        // Assuming fields are in the order: title, director, year, length, genre, rating
+        String[] fields = line.split(",");
+        if (fields.length != 6) {
+            System.out.println("CSV line must have exactly 6 fields");
+            return null;
+        }
+        String title = fields[0].trim();
+        String director = fields[1].trim();
+        int year;
+        int length;
+        String genre = fields[4].trim();
+        int rating;
+        try {
+            year = Integer.parseInt(fields[2].trim());
+            length = Integer.parseInt(fields[3].trim());
+            rating = Integer.parseInt(fields[5].trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Year, length, and rating must be valid integers");
+            return null;
+        }
+        return new Movie(title, director, year, length, genre, rating);
+    }
 
+    public String toCSVLine() {
+        return String.join(",", title, director, String.valueOf(year), String.valueOf(length), genre, String.valueOf(rating));
+    }
 }

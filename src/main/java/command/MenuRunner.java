@@ -49,6 +49,16 @@ public class MenuRunner {
         }
     }
 
+    // Asks the user for a full line of text (may contain spaces)
+    public static String prompt(String message) {
+        System.out.print(message);
+        String line;
+        do {
+            line = scan.nextLine();
+        } while (line.isBlank()); // skips the newline left behind by scan.next()
+        return line.trim();
+    }
+
     public static void placeholder() {
         
     }

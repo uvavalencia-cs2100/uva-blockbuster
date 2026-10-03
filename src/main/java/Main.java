@@ -1,15 +1,17 @@
 import java.util.List;
 
 import command.Command;
+import command.CustomerCommands;
 import command.MenuRunner;
+import dataloader.DataLoader;
 
 public class Main {
         
     // Lists customer options and takes user input to navigate to the appropriate method
     public static void CustomerOptions() {
-        Command add = new Command('a', "Add new Customer", MenuRunner::placeholder);
-        Command list = new Command('l', "List Customers", MenuRunner::placeholder);
-        Command delete = new Command('d', "Delete Customers", MenuRunner::placeholder);
+        Command add = new Command('a', "Add new Customer", CustomerCommands::addCustomer);
+        Command list = new Command('l', "List Customers", CustomerCommands::listCustomers);
+        Command delete = new Command('d', "Delete Customers", CustomerCommands::deleteCustomer);
         
         List<Command> commands = List.of(add, list, delete, MenuRunner.BACK, MenuRunner.HELP);
         
@@ -40,6 +42,9 @@ public class Main {
 
     // Lists main menu options and takes user input to navigate to the appropriate method
     public static void main(String[] args) {
+        // Lists main menu options and takes user input to navigate to the appropriate method
+        DataLoader.loadData("data");
+
         Command customerOptions = new Command('c', "Customer Options", Main::CustomerOptions);
         Command movieOptions = new Command('m', "Movie Options", Main::MovieOptions);
         Command rentalOptions = new Command('r', "Rental Options", Main::RentalOptions);

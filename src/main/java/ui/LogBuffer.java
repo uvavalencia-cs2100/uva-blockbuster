@@ -21,8 +21,7 @@ public class LogBuffer extends Handler {
 
     private final Deque<String> lines = new ArrayDeque<>();
 
-    private LogBuffer() {
-    }
+    private LogBuffer() {}
 
     // Replaces the default console handler with the buffer. Call once at startup.
     public static void install() {
@@ -40,8 +39,13 @@ public class LogBuffer extends Handler {
     public synchronized void publish(LogRecord record) {
         String source = record.getLoggerName() == null ? "" : record.getLoggerName();
         source = source.substring(source.lastIndexOf('.') + 1);
-        String line = String.format("%s %-7s %s: %s",
-                LocalTime.now().format(TIME), record.getLevel().getName(), source, record.getMessage());
+        String line =
+                String.format(
+                        "%s %-7s %s: %s",
+                        LocalTime.now().format(TIME),
+                        record.getLevel().getName(),
+                        source,
+                        record.getMessage());
         lines.addLast(line);
         if (lines.size() > MAX_LINES) {
             lines.removeFirst();
@@ -55,10 +59,8 @@ public class LogBuffer extends Handler {
     }
 
     @Override
-    public void flush() {
-    }
+    public void flush() {}
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 }

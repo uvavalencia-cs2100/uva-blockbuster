@@ -1,7 +1,7 @@
 package movie;
 
 // Never allowed to exist in an invalid state: the constructor and the setters validate every value.
-public class MovieCopy {
+public final class MovieCopy {
     private final int id;
     private Movie movie;
     private MovieStatus status;
@@ -53,5 +53,4 @@ public class MovieCopy {
         }
         this.copyNumber = copyNumber;
     }
-
 }

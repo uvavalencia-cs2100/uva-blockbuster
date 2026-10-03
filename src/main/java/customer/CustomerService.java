@@ -63,7 +63,8 @@ public class CustomerService {
             throw new IllegalArgumentException("Customer cannot be null");
         }
         if (customers.containsKey(customer.getId())) {
-            throw new IllegalArgumentException("A customer with id " + customer.getId() + " already exists");
+            throw new IllegalArgumentException(
+                    "A customer with id " + customer.getId() + " already exists");
         }
         customers.put(customer.getId(), customer);
     }

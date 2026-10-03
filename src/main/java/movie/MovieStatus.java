@@ -1,7 +1,8 @@
 package movie;
 
 // Where a copy of a movie is in its life: on the shelf, out with a customer, or out of circulation.
-// Each status carries an int code, which is what gets stored (e.g. in a CSV file) instead of the name.
+// Each status carries an int code, which is what gets stored (e.g. in a CSV file) instead of the
+// name.
 public enum MovieStatus {
     AVAILABLE(1),
     RENTED(2),

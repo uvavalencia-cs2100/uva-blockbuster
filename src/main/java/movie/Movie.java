@@ -1,7 +1,7 @@
 package movie;
 
 // Never allowed to exist in an invalid state: the constructor and the setters validate every value.
-public class Movie {
+public final class Movie {
     public static final String CSV_HEADER = "id,title,director,year,length,genre,rating";
 
     private static final int MIN_YEAR = 1900;
@@ -17,7 +17,8 @@ public class Movie {
     private String genre;
     private int rating;
 
-    public Movie(int id, String title, String director, int year, int length, String genre, int rating) {
+    public Movie(
+            int id, String title, String director, int year, int length, String genre, int rating) {
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a positive integer");
         }
@@ -56,7 +57,8 @@ public class Movie {
 
     public void setYear(int year) {
         if (year < MIN_YEAR || year > MAX_YEAR) {
-            throw new IllegalArgumentException("Year must be between " + MIN_YEAR + " and " + MAX_YEAR);
+            throw new IllegalArgumentException(
+                    "Year must be between " + MIN_YEAR + " and " + MAX_YEAR);
         }
         this.year = year;
     }
@@ -70,7 +72,8 @@ public class Movie {
             throw new IllegalArgumentException("Length must be a positive integer");
         }
         if (length > MAX_LENGTH) {
-            throw new IllegalArgumentException("Length must be less than or equal to " + MAX_LENGTH + " minutes");
+            throw new IllegalArgumentException(
+                    "Length must be less than or equal to " + MAX_LENGTH + " minutes");
         }
         this.length = length;
     }
@@ -94,7 +97,8 @@ public class Movie {
         this.rating = rating;
     }
 
-    // Text fields cannot be null or blank, and cannot contain a comma because it would break the CSV file
+    // Text fields cannot be null or blank, and cannot contain a comma because it would break the
+    // CSV file
     private static String requireText(String value, String field) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(field + " cannot be null or blank");
@@ -121,12 +125,21 @@ public class Movie {
             length = Integer.parseInt(fields[4].trim());
             rating = Integer.parseInt(fields[6].trim());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Id, year, length, and rating must be valid integers", e);
+            throw new IllegalArgumentException(
+                    "Id, year, length, and rating must be valid integers", e);
         }
         return new Movie(id, fields[1], fields[2], year, length, fields[5], rating);
     }
 
     public String toCSVLine() {
-        return String.join(",", String.valueOf(id), title, director, String.valueOf(year), String.valueOf(length), genre, String.valueOf(rating));
+        return String.join(
+                ",",
+                String.valueOf(id),
+                title,
+                director,
+                String.valueOf(year),
+                String.valueOf(length),
+                genre,
+                String.valueOf(rating));
     }
 }

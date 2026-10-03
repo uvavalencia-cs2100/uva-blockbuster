@@ -3,7 +3,7 @@ package customer;
 import java.util.Objects;
 
 // Entity: identified by its id, and never allowed to exist in an invalid state.
-public class Customer {
+public final class Customer {
     // First line of a customers CSV file. The columns, in order, are the ones fromCSVLine reads and
     // toCSVLine writes, so change all three together.
     public static final String CSV_HEADER = "id,name,email";
@@ -78,7 +78,7 @@ public class Customer {
     public boolean equals(Object object) {
         if (object == null) return false;
         if (this == object) return true;
-        if (object instanceof Customer){
+        if (object instanceof Customer) {
             Customer otherCustomer = (Customer) object;
             return this.id == otherCustomer.id;
         }

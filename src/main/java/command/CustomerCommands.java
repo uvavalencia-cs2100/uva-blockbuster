@@ -1,21 +1,22 @@
 package command;
 
+import app.AppContext;
+
+import customer.Customer;
+import customer.CustomerService;
+
+import ui.Screen;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import app.AppContext;
-import customer.Customer;
-import customer.CustomerService;
-import ui.Screen;
 
 // Actions behind the customer menu. They go through the CustomerService held by AppContext.
 public class CustomerCommands {
 
     private static final Logger log = Logger.getLogger(CustomerCommands.class.getName());
 
-    private CustomerCommands() {
-    }
+    private CustomerCommands() {}
 
     private static CustomerService customerService() {
         return AppContext.getInstance().getCustomerService();

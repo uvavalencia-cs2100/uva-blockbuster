@@ -1,10 +1,11 @@
 package app;
 
-import java.util.logging.Logger;
-
 import config.AppConfig;
+
 import customer.CustomerRepository;
 import customer.CustomerService;
+
+import java.util.logging.Logger;
 
 // Singleton: the one place where the shared services and settings live, so the menus and the
 // startup code all talk to the same CustomerService instance and read the same configuration.
@@ -16,14 +17,14 @@ public class AppContext {
     // Created on first use, once the config is final, because creating it loads the customers
     private CustomerService customerService;
 
-    private AppContext() {
-    }
+    private AppContext() {}
 
     public static AppContext getInstance() {
         return INSTANCE;
     }
 
-    // Loads the data at startup, from the data path in the config. Only customers are loaded for now:
+    // Loads the data at startup, from the data path in the config. Only customers are loaded for
+    // now:
     // they load themselves when their service is created. The other entities are not ready yet.
     public void loadData() {
         log.info("Loading data from " + config.getDataPath());

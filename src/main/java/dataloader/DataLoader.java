@@ -20,13 +20,12 @@ public class DataLoader {
                     first = false; // Skip the header line
                     continue;
                 }
-                String[] fields = line.split(",");
-                
                 switch (className) {
                     case "Customer" -> {
-                        Customer c = Customer.fromCSVLine(line);
-                        if (c != null) {
-                            AppContext.getInstance().getCustomerService().add(c);
+                        try {
+                            AppContext.getInstance().getCustomerService().add(Customer.fromCSVLine(line));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Skipping invalid customer line: " + e.getMessage());
                         }
                     }
                     case "Movie" -> {

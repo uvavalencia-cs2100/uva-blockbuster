@@ -44,27 +44,23 @@ public class Customer {
     }
 
     public static Customer fromCSVLine(String line) {
-        // Assuming fields are in the order: name, email, id
+        // Fields are in the order: id, name, email
         String[] fields = line.split(",");
         if (fields.length != 3) {
-            System.out.println("CSV line must have exactly 3 fields");
-            return null;
+            throw new IllegalArgumentException("CSV line must have exactly 3 fields");
         }
-        String name = fields[0].trim();
-        String email = fields[1].trim();
         int id;
         try {
-            id = Integer.parseInt(fields[2].trim());
+            id = Integer.parseInt(fields[0].trim());
         } catch (NumberFormatException e) {
-            System.out.println("Id must be a valid integer");
-            return null;
+            throw new IllegalArgumentException("Id must be a valid integer", e);
         }
-        return new Customer(name, email, id);
+        return new Customer(fields[1].trim(), fields[2].trim(), id);
     }
 
-    public String toCSVLine() {
-        // Assuming fields are in the order: name, email, id
-        return String.format("%s,%s,%d", getName(), getEmail(), getId());
+    public static String toCSVLine(Customer customer) {
+        // Fields are in the order: id, name, email
+        return String.format("%d,%s,%s", customer.getId(), customer.getName(), customer.getEmail());
     }
 
     // Two customers are the same customer if they share an id

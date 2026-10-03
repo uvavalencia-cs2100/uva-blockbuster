@@ -1,139 +1,132 @@
 package movie;
 
-import java.util.logging.Logger;
-
+// Never allowed to exist in an invalid state: the constructor and the setters validate every value.
 public class Movie {
-    private static final Logger log = Logger.getLogger(Movie.class.getName());
+    public static final String CSV_HEADER = "id,title,director,year,length,genre,rating";
 
+    private static final int MIN_YEAR = 1900;
+    private static final int MAX_YEAR = 2027;
+    private static final int MAX_LENGTH = 500;
+    private static final int MAX_RATING = 10;
 
-    private final int movieId;
-    private static int NEXT_ID = 1; // can use for auto-incrementing movieId because static
+    private final int id;
     private String title;
     private String director;
     private int year;
     private int length;
+    private String genre;
     private int rating;
 
-    public Movie(String title, String director, int year, int length, int rating) {
-        // can't be null or empty
-        if (title == null || title.isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be null or empty");
+    public Movie(int id, String title, String director, int year, int length, String genre, int rating) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Id must be a positive integer");
         }
-        
-        // can't be null or empty
-        if (director == null || director.isEmpty()) {
-            throw new IllegalArgumentException("Director cannot be null or empty");
-        }
-
-        // must be 4 digits from 1900 and 2026
-        if (year < 1900 || year > 2026) {
-            throw new IllegalArgumentException("Year must be between 1900 and 2026");
-        }
-        
-        // must be a positive integer
-        if (length <= 0 || length > 500) {
-            throw new IllegalArgumentException("Length must be a positive integer");
-        }
-
-        // must be a valid rating 0-10
-        if (rating < 0 || rating > 10) {
-            throw new IllegalArgumentException("Rating must be between 0 and 10");
-        }
-        
-        this.movieId = NEXT_ID++; // auto-increment movieId with static variable NEXT_ID
-        this.title = title;
-        this.director = director;
-        this.year = year;
-        this.length = length;
-        this.rating = rating;
+        this.id = id;
+        setTitle(title);
+        setDirector(director);
+        setYear(year);
+        setLength(length);
+        setGenre(genre);
+        setRating(rating);
     }
-    
-    public int getMovieId() {
-        return movieId;
+
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
-        return title;}
-
+        return title;
+    }
 
     public void setTitle(String title) {
-        if (title == null || title.isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be null or empty");
-        }
-        this.title = title;
+        this.title = requireText(title, "Title");
     }
-
 
     public String getDirector() {
-        return director;}
-
-    public void setDirector(String director) {
-        if (director == null || director.isEmpty()) {
-            throw new IllegalArgumentException("Director cannot be null or empty");
-        }
-        this.director = director;
+        return director;
     }
 
-
-
+    public void setDirector(String director) {
+        this.director = requireText(director, "Director");
+    }
 
     public int getYear() {
-        return year;}
+        return year;
+    }
 
     public void setYear(int year) {
-        if (year < 1900 || year > 2026) {
-            throw new IllegalArgumentException("Year must be between 1900 and 2026");
+        if (year < MIN_YEAR || year > MAX_YEAR) {
+            throw new IllegalArgumentException("Year must be between " + MIN_YEAR + " and " + MAX_YEAR);
         }
         this.year = year;
     }
 
     public int getLength() {
-        return length;}
+        return length;
+    }
 
     public void setLength(int length) {
-        if (length <= 0 || length > 500) {
-            throw new IllegalArgumentException("Length must be between 1 and 500 minutes");
+        if (length <= 0) {
+            throw new IllegalArgumentException("Length must be a positive integer");
+        }
+        if (length > MAX_LENGTH) {
+            throw new IllegalArgumentException("Length must be less than or equal to " + MAX_LENGTH + " minutes");
         }
         this.length = length;
     }
 
+    public String getGenre() {
+        return genre;
+    }
 
-    public int getRating() {         
-        return rating;}
+    public void setGenre(String genre) {
+        this.genre = requireText(genre, "Genre");
+    }
 
+    public int getRating() {
+        return rating;
+    }
 
     public void setRating(int rating) {
-        if (rating < 0 || rating > 10) {
-            throw new IllegalArgumentException("Rating must be between 0 and 10");
+        if (rating < 0 || rating > MAX_RATING) {
+            throw new IllegalArgumentException("Rating must be between 0 and " + MAX_RATING);
         }
         this.rating = rating;
     }
 
-    public static Movie fromCSVLine(String line) {
-        // Assuming fields are in the order: title, director, year, length, genre, rating
-        String[] fields = line.split(",");
-        if (fields.length != 6) {
-            log.warning("CSV line must have exactly 6 fields");
-            return null;
+    // Text fields cannot be null or blank, and cannot contain a comma because it would break the CSV file
+    private static String requireText(String value, String field) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(field + " cannot be null or blank");
         }
-        String title = fields[0].trim();
-        String director = fields[1].trim();
+        if (value.contains(",")) {
+            throw new IllegalArgumentException(field + " cannot contain a comma");
+        }
+        return value.trim();
+    }
+
+    public static Movie fromCSVLine(String line) {
+        // Fields are in the order: id, title, director, year, length, genre, rating
+        String[] fields = line.split(",");
+        if (fields.length != 7) {
+            throw new IllegalArgumentException("CSV line must have exactly 7 fields");
+        }
+        int id;
         int year;
         int length;
-        String genre = fields[4].trim();
         int rating;
         try {
-            year = Integer.parseInt(fields[2].trim());
-            length = Integer.parseInt(fields[3].trim());
-            rating = Integer.parseInt(fields[5].trim());
+            id = Integer.parseInt(fields[0].trim());
+            year = Integer.parseInt(fields[3].trim());
+            length = Integer.parseInt(fields[4].trim());
+            rating = Integer.parseInt(fields[6].trim());
         } catch (NumberFormatException e) {
-            log.warning("Year, length, and rating must be valid integers");
-            return null;
+            throw new IllegalArgumentException("Id, year, length, and rating must be valid integers", e);
         }
-        return new Movie(title, director, year, length, genre, rating);
+        return new Movie(id, fields[1], fields[2], year, length, fields[5], rating);
     }
 
     public String toCSVLine() {
-        return String.join(",", title, director, String.valueOf(year), String.valueOf(length), genre, String.valueOf(rating));
+        return String.join(",", String.valueOf(id), title, director, String.valueOf(year), String.valueOf(length), genre, String.valueOf(rating));
     }
 }

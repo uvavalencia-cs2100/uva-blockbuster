@@ -170,12 +170,12 @@ classDiagram
     class Customer
     class Movie
     class MovieCopy
-    class Status {
+    class MovieStatus {
         <<enumeration>>
     }
 
     MovieCopy "*" --> "1" Movie : is a copy of
-    MovieCopy --> Status : has
+    MovieCopy --> MovieStatus : has
 ```
 
 Notes:
@@ -183,9 +183,9 @@ Notes:
 - **Customer** is the finished entity. Its id never changes (it is `final`), `equals`/`hashCode`
   use only the id (two customers are the same customer if they share an id), and the setters
   validate. Names and emails cannot contain a comma, because that would corrupt the CSV.
-- **Movie** and **MovieCopy** are still being built: they have no id yet and no service or
+- **Movie** and **MovieCopy** are still being built: they have no service or
   repository. A `Movie` is the film; each physical/rentable item is a `MovieCopy` that points to
-  its `Movie` and has a `Status`.
+  its `Movie` and has a `MovieStatus`.
 
 ## 4. UML: Entity → Service → Repository (Customer)
 

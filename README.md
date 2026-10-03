@@ -44,6 +44,11 @@ mvn compile
 java -cp target/classes Main
 ```
 
+## Architecture
+
+See [docs/README.md](docs/README.md) for how the code is organised (Entity, Service and
+Repository), what happens when the app boots, and the UML diagrams.
+
 ## CI
 
 Every pull request runs `.github/workflows/java-build.yml`, which compiles the

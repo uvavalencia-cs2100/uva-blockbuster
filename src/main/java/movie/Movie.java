@@ -1,5 +1,9 @@
 package movie;
+
+import java.util.logging.Logger;
+
 public class Movie {
+    private static final Logger log = Logger.getLogger(Movie.class.getName());
 
 
     private final int movieId;
@@ -109,7 +113,7 @@ public class Movie {
         // Assuming fields are in the order: title, director, year, length, genre, rating
         String[] fields = line.split(",");
         if (fields.length != 6) {
-            System.out.println("CSV line must have exactly 6 fields");
+            log.warning("CSV line must have exactly 6 fields");
             return null;
         }
         String title = fields[0].trim();
@@ -123,7 +127,7 @@ public class Movie {
             length = Integer.parseInt(fields[3].trim());
             rating = Integer.parseInt(fields[5].trim());
         } catch (NumberFormatException e) {
-            System.out.println("Year, length, and rating must be valid integers");
+            log.warning("Year, length, and rating must be valid integers");
             return null;
         }
         return new Movie(title, director, year, length, genre, rating);

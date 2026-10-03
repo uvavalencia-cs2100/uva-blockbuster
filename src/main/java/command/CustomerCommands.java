@@ -1,13 +1,18 @@
 package command;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import app.AppContext;
 import customer.Customer;
 import customer.CustomerService;
+import ui.Screen;
 
 // Actions behind the customer menu. They go through the CustomerService held by AppContext.
 public class CustomerCommands {
+
+    private static final Logger log = Logger.getLogger(CustomerCommands.class.getName());
 
     private CustomerCommands() {
     }
@@ -18,38 +23,37 @@ public class CustomerCommands {
 
     public static void addCustomer() {
         try {
-            String name = MenuRunner.prompt("Name: ");
-            String email = MenuRunner.prompt("Email: ");
-            int id = Integer.parseInt(MenuRunner.prompt("Id: "));
+            List<String> form = new ArrayList<>(List.of("New customer"));
+            int id = Integer.parseInt(MenuRunner.ask(form, "Id"));
+            String name = MenuRunner.ask(form, "Name");
+            String email = MenuRunner.ask(form, "Email");
             customerService().add(new Customer(id, name, email));
-            System.out.println("Customer added.");
+            log.info("Customer added: " + id);
         } catch (NumberFormatException e) {
-            System.out.println("Id must be a number.");
+            log.warning("Id must be a number.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Could not add customer: " + e.getMessage());
+            log.warning("Could not add customer: " + e.getMessage());
         }
     }
 
     public static void listCustomers() {
         List<Customer> all = customerService().list();
         if (all.isEmpty()) {
-            System.out.println("No customers.");
+            log.info("No customers.");
         }
-        for (Customer c : all) {
-            System.out.println(c);
-        }
+        Screen.setContent(all.stream().map(Customer::toString).toList());
     }
 
     public static void deleteCustomer() {
         try {
             int id = Integer.parseInt(MenuRunner.prompt("Id of the customer to delete: "));
             if (customerService().remove(id)) {
-                System.out.println("Customer deleted.");
+                log.info("Customer deleted: " + id);
             } else {
-                System.out.println("No customer with id " + id);
+                log.warning("No customer with id " + id);
             }
         } catch (NumberFormatException e) {
-            System.out.println("Id must be a number.");
+            log.warning("Id must be a number.");
         }
     }
 }

@@ -14,7 +14,8 @@ import java.util.function.Supplier;
 public class Screen {
     // ANSI escape sequences: "ESC [" (the Control Sequence Introducer) followed by a command
     private static final String ESC = "\u001b[";
-    // Switches to the terminal's alternate screen buffer: a blank screen with no scrollback, and the
+    // Switches to the terminal's alternate screen buffer: a blank screen with no scrollback, and
+    // the
     // normal screen is saved. This is what vim, less and k9s do, so the app owns the whole window.
     private static final String ENTER_ALT_SCREEN = ESC + "?1049h";
     // Switches back to the normal screen buffer, restoring what the user had before the app started
@@ -25,7 +26,8 @@ public class Screen {
     private static final String CURSOR_HOME = ESC + "H";
     private static final String BORDER = ESC + "36m"; // cyan
     private static final String RESET = ESC + "0m";
-    // Frame colors: light gray text (256-color palette 252) on blue menu and log frames and a dark gray content frame, so the
+    // Frame colors: light gray text (256-color palette 252) on blue menu and log frames and a dark
+    // gray content frame, so the
     // frames stand out from each other whatever theme the terminal uses
     private static final String MENU_COLOR = ESC + "38;5;252;48;5;24m";
     private static final String CONTENT_COLOR = ESC + "38;5;252;48;5;235m";
@@ -45,8 +47,7 @@ public class Screen {
     private static List<String> menu = List.of();
     private static List<String> content = List.of();
 
-    private Screen() {
-    }
+    private Screen() {}
 
     // Takes over the terminal. Safe to call more than once.
     public static void start() {
@@ -56,7 +57,8 @@ public class Screen {
         started = true;
         System.out.print(ENTER_ALT_SCREEN + CLEAR_SCREEN + CURSOR_HOME);
         System.out.flush();
-        // Registers a thread the JVM runs just before it exits (System.exit, Ctrl+C, end of main), so
+        // Registers a thread the JVM runs just before it exits (System.exit, Ctrl+C, end of main),
+        // so
         // the terminal always leaves the alternate screen, even if the app stops unexpectedly.
         // stop() is idempotent, so it is harmless if it already ran.
         Runtime.getRuntime().addShutdownHook(new Thread(Screen::stop));
@@ -168,11 +170,20 @@ public class Screen {
         return BORDER + left + line + right + RESET + "\n";
     }
 
-    private static void appendRows(StringBuilder out, List<String> lines, int count, int inner, String color) {
+    private static void appendRows(
+            StringBuilder out, List<String> lines, int count, int inner, String color) {
         for (int i = 0; i < count; i++) {
             String text = i < lines.size() ? " " + lines.get(i) : "";
-            out.append(BORDER).append('│').append(RESET).append(color).append(fit(text, inner)).append(RESET)
-               .append(BORDER).append('│').append(RESET).append('\n');
+            out.append(BORDER)
+                    .append('│')
+                    .append(RESET)
+                    .append(color)
+                    .append(fit(text, inner))
+                    .append(RESET)
+                    .append(BORDER)
+                    .append('│')
+                    .append(RESET)
+                    .append('\n');
         }
     }
 
@@ -184,26 +195,30 @@ public class Screen {
         return text + " ".repeat(width - text.length());
     }
 
-    // Terminal size as {rows, cols}, never smaller than MIN_ROWS x MIN_COLS so the layout always fits
+    // Terminal size as {rows, cols}, never smaller than MIN_ROWS x MIN_COLS so the layout always
+    // fits
     private static int[] terminalSize() {
         int[] size = readTerminalSize();
-        return new int[] { Math.max(size[0], MIN_ROWS), Math.max(size[1], MIN_COLS) };
+        return new int[] {Math.max(size[0], MIN_ROWS), Math.max(size[1], MIN_COLS)};
     }
 
     // Asks stty on Unix, falls back to a classic 80x24
     private static int[] readTerminalSize() {
         try {
-            Process p = new ProcessBuilder("sh", "-c", "stty size < /dev/tty").redirectErrorStream(true).start();
+            Process p =
+                    new ProcessBuilder("sh", "-c", "stty size < /dev/tty")
+                            .redirectErrorStream(true)
+                            .start();
             String[] parts = new String(p.getInputStream().readAllBytes()).trim().split(" ");
             p.waitFor();
             if (parts.length == 2) {
-                return new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
+                return new int[] {Integer.parseInt(parts[0]), Integer.parseInt(parts[1])};
             }
         } catch (IOException | NumberFormatException e) {
             // no stty or no terminal: use the default
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return new int[] { DEFAULT_ROWS, DEFAULT_COLS };
+        return new int[] {DEFAULT_ROWS, DEFAULT_COLS};
     }
 }

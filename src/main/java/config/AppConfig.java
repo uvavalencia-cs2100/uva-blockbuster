@@ -40,7 +40,8 @@ public class AppConfig {
                 properties.load(reader);
                 log.info("Read config from " + file);
             } catch (IOException | IllegalArgumentException e) {
-                log.warning("Could not read config " + file + ", using defaults: " + e.getMessage());
+                log.warning(
+                        "Could not read config " + file + ", using defaults: " + e.getMessage());
             }
         } else {
             log.info("No config file at " + file + ", using defaults");

@@ -4,6 +4,10 @@ import java.util.Objects;
 
 // Entity: identified by its id, and never allowed to exist in an invalid state.
 public class Customer {
+    // First line of a customers CSV file. The columns, in order, are the ones fromCSVLine reads and
+    // toCSVLine writes, so change all three together.
+    public static final String CSV_HEADER = "id,name,email";
+
     private final int id;
     private String name;
     private String email;
@@ -29,6 +33,9 @@ public class Customer {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be null or blank");
         }
+        if (name.contains(",")) { // it would break the CSV file
+            throw new IllegalArgumentException("Name cannot contain a comma");
+        }
         this.name = name.trim();
     }
 
@@ -39,6 +46,9 @@ public class Customer {
     public void setEmail(String email) {
         if (email == null || !email.contains("@")) {
             throw new IllegalArgumentException("Email must contain '@'");
+        }
+        if (email.contains(",")) { // it would break the CSV file
+            throw new IllegalArgumentException("Email cannot contain a comma");
         }
         this.email = email.trim();
     }

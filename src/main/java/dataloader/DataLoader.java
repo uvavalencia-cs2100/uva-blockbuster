@@ -11,13 +11,11 @@ import inventory.Inventory;
 public class DataLoader {
     
     private static void readFile(String path, String className) {
-        boolean first = true;
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            br.readLine(); // Skip the header line
             String line;
             while ((line = br.readLine()) != null) {
-                System.out.println("Read line: " + line); // Debugging output
-                if (first)  {
-                    first = false; // Skip the header line
+                if (line.isBlank()) {
                     continue;
                 }
                 switch (className) {

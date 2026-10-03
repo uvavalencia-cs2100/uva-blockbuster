@@ -1,76 +1,57 @@
 package movie;
 
+// Never allowed to exist in an invalid state: the constructor and the setters validate every value.
 public class MovieCopy {
-
+    private final int id;
     private Movie movie;
-    private int copyId;
-    private Status status;
-    private enum Status{AVAILABLE, RENTED, DAMAGED, LOST};
+    private MovieStatus status;
     private int copyNumber;
-    private int totalCopies;
 
-    public MovieCopy(Movie movie, int copyId, Status status, int copyNumber, int totalCopies) {
-        this.movie = movie;
-        this.copyId = copyId;
-        this.status = status;
-        this.copyNumber = copyNumber;
-        this.totalCopies = totalCopies;
+    public MovieCopy(int id, Movie movie, MovieStatus status, int copyNumber) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Id must be a positive integer");
+        }
+        this.id = id;
+        setMovie(movie);
+        setStatus(status);
+        setCopyNumber(copyNumber);
     }
 
-
     public Movie getMovie() {
-        // can't be null
-        if (movie == null) {
-            throw new IllegalArgumentException("Movie cannot be null");
-        }
         return movie;
     }
 
-
-
-    public int getCopyId() {       
-        // must be a positive integer
-        if (copyId <= 0) {
-            throw new IllegalArgumentException("Copy ID must be a positive integer");
+    public void setMovie(Movie movie) {
+        if (movie == null) {
+            throw new IllegalArgumentException("Movie cannot be null");
         }
-        return copyId;
+        this.movie = movie;
     }
 
+    public int getId() {
+        return id;
+    }
 
-
-    public Status getStatus() {
-        // must be a valid status
-        if (status == null) {
-            throw new IllegalArgumentException("Status cannot be null");
-        }
+    public MovieStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(MovieStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status cannot be null");
+        }
         this.status = status;
     }
 
-
     public int getCopyNumber() {
-        // must be a positive integer
-        if (copyNumber <= 0) {
-            throw new IllegalArgumentException("Copy number must be a positive integer");
-        }
         return copyNumber;
     }
 
-    public int getTotalCopies() {
-        // must be a positive integer
-        if (totalCopies <= 0) {
-            throw new IllegalArgumentException("Total copies must be a positive integer");
+    public void setCopyNumber(int copyNumber) {
+        if (copyNumber <= 0) {
+            throw new IllegalArgumentException("Copy number must be a positive integer");
         }
-        return totalCopies;
+        this.copyNumber = copyNumber;
     }
 
-
-    // constructor
-    public static MovieCopy createMovieCopy(Movie movie, int copyId, Status status, int copyNumber, int totalCopies) {
-        return new MovieCopy(movie, copyId, status, copyNumber, totalCopies);
-    }
-    
 }

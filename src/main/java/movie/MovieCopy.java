@@ -1,38 +1,56 @@
 package movie;
 
-import store.Store;
+// Never allowed to exist in an invalid state: the constructor and the setters validate every value.
+public final class MovieCopy {
+    private final int id;
+    private Movie movie;
+    private MovieStatus status;
+    private int copyNumber;
 
-public class MovieCopy {
-
-    private Movie movie; // a reference to the Movie it is a copy of
-    private static int NEXT_ID = 1; // can use for auto-incrementing copyId because static
-    private final int copyId; // a unique copy id
-    private Store store; // a reference to the Store it belongs to 
-
-    
-    // Constructor that takes a Movie and starts the copy as AVAILABLE.
-    public MovieCopy(Movie movie, Store store) {
-        if (movie == null) {
-            throw new IllegalArgumentException("Movie cannot be null");
+    public MovieCopy(int id, Movie movie, MovieStatus status, int copyNumber) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Id must be a positive integer");
         }
-        
-        this.movie = movie;
-        this.copyId = NEXT_ID++; // auto-increment copyId with static variable NEXT_ID
-        this.store = store; // initialize store as null
+        this.id = id;
+        setMovie(movie);
+        setStatus(status);
+        setCopyNumber(copyNumber);
     }
 
-
-    // Getter for all fields
     public Movie getMovie() {
         return movie;
     }
 
-    public int getCopyId() {       
-        return copyId;
+    public void setMovie(Movie movie) {
+        if (movie == null) {
+            throw new IllegalArgumentException("Movie cannot be null");
+        }
+        this.movie = movie;
     }
 
-    public Store getStore() {
-        return store;
+    public int getId() {
+        return id;
     }
 
+    public MovieStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MovieStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status cannot be null");
+        }
+        this.status = status;
+    }
+
+    public int getCopyNumber() {
+        return copyNumber;
+    }
+
+    public void setCopyNumber(int copyNumber) {
+        if (copyNumber <= 0) {
+            throw new IllegalArgumentException("Copy number must be a positive integer");
+        }
+        this.copyNumber = copyNumber;
+    }
 }

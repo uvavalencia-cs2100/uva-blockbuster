@@ -4,7 +4,7 @@ public class Command {
     private final char key;
     private final String description;
     private final Runnable action;
-    
+
     public Command(char key, String description, Runnable action) {
         this.key = key;
         this.description = description;
@@ -23,4 +23,3 @@ public class Command {
         action.run();
     }
 }
-

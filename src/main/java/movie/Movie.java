@@ -9,6 +9,7 @@ public class Movie {
     private int year;
     private int length;
     private int rating;
+    private MovieStatus movieStatus; // a reference to the MovieStatus of the movie
 
     public Movie(String title, String director, int year, int length, int rating) {
         // can't be null or empty
@@ -42,6 +43,7 @@ public class Movie {
         this.year = year;
         this.length = length;
         this.rating = rating;
+        this.movieStatus = new MovieStatus(); 
     }
     
     public int getMovieId() {
@@ -105,5 +107,13 @@ public class Movie {
         this.rating = rating;
     }
 
+
+    public MovieStatus getMovieStatus() {
+        return movieStatus;
+    }
+
+    public void setMovieStatus(MovieStatus movieStatus) {
+        this.movieStatus = movieStatus;
+}
 
 }

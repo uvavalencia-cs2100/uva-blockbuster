@@ -8,10 +8,11 @@ public class Movie {
     private String director;
     private int year;
     private int length;
+    private String genre;
     private int rating;
     private MovieStatus movieStatus; // a reference to the MovieStatus of the movie
 
-    public Movie(String title, String director, int year, int length, int rating) {
+    public Movie(String title, String director, int year, int length, String genre, int rating) {
         // can't be null or empty
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("Title cannot be null or empty");
@@ -32,6 +33,11 @@ public class Movie {
             throw new IllegalArgumentException("Length must be a positive integer");
         }
 
+        // can't be null or empty
+        if (genre == null || genre.isEmpty()) {
+            throw new IllegalArgumentException("Genre cannot be null or empty");
+        }
+
         // must be a valid rating 0-10
         if (rating < 0 || rating > 10) {
             throw new IllegalArgumentException("Rating must be between 0 and 10");
@@ -42,6 +48,7 @@ public class Movie {
         this.director = director;
         this.year = year;
         this.length = length;
+        this.genre = genre;
         this.rating = rating;
         this.movieStatus = new MovieStatus(); 
     }
@@ -94,6 +101,16 @@ public class Movie {
         }
         this.length = length;
     }
+
+    public String getGenre() {
+        return genre;}
+
+    public void setGenre(String genre) {
+        if (genre == null || genre.isEmpty()) {
+            throw new IllegalArgumentException("Genre cannot be null or empty");
+        }
+        this.genre = genre;
+    }    
 
 
     public int getRating() {         

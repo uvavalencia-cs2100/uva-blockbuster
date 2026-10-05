@@ -2,27 +2,21 @@ package customer;
 
 import java.util.Objects;
 
+import entity.Entity;
+
 // Entity: identified by its id, and never allowed to exist in an invalid state.
-public final class Customer {
+public final class Customer extends Entity {
     // First line of a customers CSV file. The columns, in order, are the ones fromCSVLine reads and
     // toCSVLine writes, so change all three together.
     public static final String CSV_HEADER = "id,name,email";
 
-    private final int id;
     private String name;
     private String email;
 
     public Customer(int id, String name, String email) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Id must be a positive integer");
-        }
-        this.id = id;
+        super(id);
         setName(name);
         setEmail(email);
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -68,9 +62,9 @@ public final class Customer {
         return new Customer(id, fields[1].trim(), fields[2].trim());
     }
 
-    public static String toCSVLine(Customer customer) {
+    public String toCSVLine() {
         // Fields are in the order: id, name, email
-        return String.format("%d,%s,%s", customer.getId(), customer.getName(), customer.getEmail());
+        return String.format("%d,%s,%s", this.getId(), this.getName(), this.getEmail());
     }
 
     // Two customers are the same customer if they share an id
@@ -80,18 +74,33 @@ public final class Customer {
         if (this == object) return true;
         if (object instanceof Customer) {
             Customer otherCustomer = (Customer) object;
-            return this.id == otherCustomer.id;
+            return this.getId() == otherCustomer.getId();
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 
     @Override
     public String toString() {
-        return String.format("Customer #%d: %s <%s>", id, name, email);
+        return String.format("Customer #%d: %s <%s>", getId(), name, email);
+    }
+
+    @Override
+    public String getSingleLineView() {
+        return String.format("Id: #%d, name: %s email: <%s>", getId(), name, email);
+    }
+
+    @Override
+    public String getDetailedView() {
+        return String.format("Id: #%d:\nName: %s\nEmail: <%s>", getId(), name, email);
+    }
+
+    @Override
+    public String getLogView() {
+        return String.format("Customer Entity - Id: #%d, Name: %s, Email: <%s>", getId(), name, email);
     }
 }

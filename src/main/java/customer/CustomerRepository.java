@@ -54,7 +54,7 @@ public class CustomerRepository {
         List<String> lines = new ArrayList<>();
         lines.add(Customer.CSV_HEADER);
         for (Customer customer : customers) {
-            lines.add(Customer.toCSVLine(customer));
+            lines.add(customer.toCSVLine());
         }
         try {
             Files.write(temp, lines, StandardCharsets.UTF_8);

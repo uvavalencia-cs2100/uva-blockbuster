@@ -1,7 +1,10 @@
 package ui;
 
+import entity.ViewOptions;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -90,6 +93,16 @@ public class Screen {
     // Data shown under the menu until it is replaced or cleared
     public static void setContent(List<String> lines) {
         content = lines;
+    }
+
+    // One line per item, whatever the item is: the UI only knows it can be viewed
+    public static void showSingleLineViews(Collection<? extends ViewOptions> items) {
+        content = items.stream().map(ViewOptions::getSingleLineView).toList();
+    }
+
+    // The detailed view of one item; its line breaks become separate rows
+    public static void showDetailedView(ViewOptions item) {
+        content = item.getDetailedView().lines().toList();
     }
 
     public static void clearContent() {

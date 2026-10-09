@@ -9,6 +9,7 @@ import ui.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 // Actions behind the customer menu. They go through the CustomerService held by AppContext.
@@ -28,8 +29,9 @@ public class CustomerCommands {
             int id = Integer.parseInt(MenuRunner.ask(form, "Id"));
             String name = MenuRunner.ask(form, "Name");
             String email = MenuRunner.ask(form, "Email");
-            customerService().add(new Customer(id, name, email));
-            log.info("Customer added: " + id);
+            Customer customer = new Customer(id, name, email);
+            customerService().add(customer);
+            log.info("Added " + customer.getLogView());
         } catch (NumberFormatException e) {
             log.warning("Id must be a number.");
         } catch (IllegalArgumentException e) {
@@ -42,14 +44,28 @@ public class CustomerCommands {
         if (all.isEmpty()) {
             log.info("No customers.");
         }
-        Screen.setContent(all.stream().map(Customer::toString).toList());
+        Screen.showSingleLineViews(all);
+    }
+
+    public static void showCustomer() {
+        try {
+            int id = Integer.parseInt(MenuRunner.prompt("Id of the customer to show: "));
+            customerService()
+                    .findById(id)
+                    .ifPresentOrElse(
+                            Screen::showDetailedView,
+                            () -> log.warning("No customer with id " + id));
+        } catch (NumberFormatException e) {
+            log.warning("Id must be a number.");
+        }
     }
 
     public static void deleteCustomer() {
         try {
             int id = Integer.parseInt(MenuRunner.prompt("Id of the customer to delete: "));
-            if (customerService().remove(id)) {
-                log.info("Customer deleted: " + id);
+            Optional<Customer> customer = customerService().findById(id);
+            if (customer.isPresent() && customerService().remove(id)) {
+                log.info("Deleted " + customer.get().getLogView());
             } else {
                 log.warning("No customer with id " + id);
             }

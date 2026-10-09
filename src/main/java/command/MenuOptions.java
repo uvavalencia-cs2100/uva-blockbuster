@@ -16,6 +16,7 @@ public class MenuOptions {
                 List.of(
                         new Command('a', "Add new Customer", CustomerCommands::addCustomer),
                         new Command('l', "List Customers", CustomerCommands::listCustomers),
+                        new Command('s', "Show Customer", CustomerCommands::showCustomer),
                         new Command('d', "Delete Customers", CustomerCommands::deleteCustomer),
                         MenuRunner.BACK,
                         MenuRunner.HELP);

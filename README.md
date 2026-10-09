@@ -1,7 +1,7 @@
 # uva-blockbuster
 
 A simple, console-based Blockbuster-style video rental app, built as a hands-on
-Java exercise. Everything runs in memory — there's no database.
+Java exercise. There's no database: data is kept in memory and stored in CSV files.
 
 ## Requirements
 
@@ -47,7 +47,8 @@ java -cp target/classes Main
 ## Architecture
 
 See [docs/README.md](docs/README.md) for how the code is organised (Entity, Service and
-Repository), what happens when the app boots, and the UML diagrams.
+Repository, each with a generic base class in the `entity` package), what happens when the app
+boots, and the UML diagrams.
 
 ## CI
 

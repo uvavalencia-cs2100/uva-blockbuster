@@ -1,4 +1,4 @@
-package entity;
+package common;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

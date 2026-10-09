@@ -1,7 +1,7 @@
 package customer;
 
-import entity.AbstractRepository;
-import entity.CsvMapping;
+import common.AbstractRepository;
+import common.CsvMapping;
 
 // Repository: stores customers in customers.csv. The file handling comes from AbstractRepository and
 // the columns from Customer, so there is nothing else to write here.

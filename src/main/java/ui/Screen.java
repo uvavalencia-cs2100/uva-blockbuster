@@ -1,7 +1,5 @@
 package ui;
 
-import entity.ViewOptions;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +7,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.function.Supplier;
+
+import common.ViewOptions;
 
 // Full-screen terminal UI: a bordered window split into an upper frame
 // (menu, data and state) and a lower frame (log), with the prompt on its last line.

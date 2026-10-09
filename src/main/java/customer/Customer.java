@@ -3,9 +3,9 @@ package customer;
 import java.util.List;
 import java.util.Objects;
 
-import entity.CsvMapping;
-import entity.CsvRow;
-import entity.Entity;
+import common.CsvMapping;
+import common.CsvRow;
+import common.Entity;
 
 // Entity: identified by its id (kept and validated by Entity), and never allowed to exist in an
 // invalid state. It knows its own CSV columns (CsvMapping) and its views, but nothing about

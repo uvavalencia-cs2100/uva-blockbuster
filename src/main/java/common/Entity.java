@@ -1,4 +1,4 @@
-package entity;
+package common;
 
 // Base of every entity (Customer, Movie, Rental ...). It owns the id and its rule (a positive
 // integer), so subclasses only add their own fields. It also requires the three views of

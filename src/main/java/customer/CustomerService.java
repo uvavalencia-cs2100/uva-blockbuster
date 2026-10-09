@@ -1,6 +1,6 @@
 package customer;
 
-import entity.AbstractService;
+import common.AbstractService;
 
 // Service: the customers' collection. All the behaviour (unique ids, add, find, list, remove, and
 // saving after each change) is inherited from AbstractService; this class fixes the type to

@@ -1,16 +1,13 @@
 package customer;
 
-import java.util.List;
 import java.util.Objects;
 
-import common.CsvMapping;
-import common.CsvRow;
 import common.Entity;
 
 // Entity: identified by its id (kept and validated by Entity), and never allowed to exist in an
-// invalid state. It knows its own CSV columns (CsvMapping) and its views, but nothing about
-// storage.
-public final class Customer extends Entity implements CsvMapping<Customer> {
+// invalid state. It knows its views, but nothing about storage: how it is stored in a CSV file is
+// described by CustomerCSV.
+public final class Customer extends Entity {
     private String name;
     private String email;
 
@@ -46,24 +43,6 @@ public final class Customer extends Entity implements CsvMapping<Customer> {
             throw new IllegalArgumentException("Email cannot contain a comma");
         }
         this.email = email.trim();
-    }
-
-    // The columns of customers.csv: the only place that lists them. The header, the values written
-    // and the values read are all declared here. See CsvMapping for what each method must do.
-    // These work on any customer, which is only used as the mapping, never for its own data.
-    @Override
-    public List<String> getCSVColumnNames() {
-        return List.of("id", "name", "email");
-    }
-
-    @Override
-    public List<String> toFields(Customer customer) {
-        return List.of(String.valueOf(customer.getId()), customer.name, customer.email);
-    }
-
-    @Override
-    public Customer fromCSVRow(CsvRow row) {
-        return new Customer(row.getInt("id"), row.getString("name"), row.getString("email"));
     }
 
     // Two customers are the same customer if they share an id

@@ -1,16 +1,16 @@
 package customer;
 
+import java.util.List;
 import java.util.Objects;
 
+import entity.CsvMapping;
+import entity.CsvRow;
 import entity.Entity;
 
 // Entity: identified by its id (kept and validated by Entity), and never allowed to exist in an
-// invalid state. It knows its own CSV columns and its views, but nothing about storage.
-public final class Customer extends Entity {
-    // First line of a customers CSV file. The columns, in order, are the ones fromCSVLine reads and
-    // toCSVLine writes, so change all three together.
-    public static final String CSV_HEADER = "id,name,email";
-
+// invalid state. It knows its own CSV columns (CsvMapping) and its views, but nothing about
+// storage.
+public final class Customer extends Entity implements CsvMapping<Customer> {
     private String name;
     private String email;
 
@@ -48,24 +48,22 @@ public final class Customer extends Entity {
         this.email = email.trim();
     }
 
-    public static Customer fromCSVLine(String line) {
-        // Fields are in the order: id, name, email
-        String[] fields = line.split(",");
-        if (fields.length != 3) {
-            throw new IllegalArgumentException("CSV line must have exactly 3 fields");
-        }
-        int id;
-        try {
-            id = Integer.parseInt(fields[0].trim());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Id must be a valid integer", e);
-        }
-        return new Customer(id, fields[1].trim(), fields[2].trim());
+    // The columns of customers.csv: the only place that lists them. The header, the values written
+    // and the values read are all declared here. See CsvMapping for what each method must do.
+    // These work on any customer, which is only used as the mapping, never for its own data.
+    @Override
+    public List<String> getCSVColumnNames() {
+        return List.of("id", "name", "email");
     }
 
-    public String toCSVLine() {
-        // Fields are in the order: id, name, email
-        return String.format("%d,%s,%s", this.getId(), this.getName(), this.getEmail());
+    @Override
+    public List<String> toFields(Customer customer) {
+        return List.of(String.valueOf(customer.getId()), customer.name, customer.email);
+    }
+
+    @Override
+    public Customer fromCSVRow(CsvRow row) {
+        return new Customer(row.getInt("id"), row.getString("name"), row.getString("email"));
     }
 
     // Two customers are the same customer if they share an id

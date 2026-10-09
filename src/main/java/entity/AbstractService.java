@@ -4,37 +4,58 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
-import customer.Customer;
-import customer.CustomerRepository;
-
+// Service base: owns the collection of one kind of entity and the rules about it (unique ids, add,
+// find, remove). Every change is handed to the repository, so callers never have to remember to
+// save. Subclasses (e.g. CustomerService) fix the type and add rules specific to their entity.
 public abstract class AbstractService<T extends Entity> {
 
     private final Map<Integer, T> elements = new LinkedHashMap<>();
     private final AbstractRepository<T> repository;
+    // Named after the concrete subclass, so log records show e.g. customer.CustomerService
+    protected final Logger log = Logger.getLogger(getClass().getName());
 
+    // Starts with whatever the repository has stored, so the service is never in a state where a
+    // save could overwrite the stored elements with an incomplete list.
     protected AbstractService(AbstractRepository<T> repository) {
         if (repository == null) {
             throw new IllegalArgumentException("Repository cannot be null");
         }
         this.repository = repository;
-        load();
+        loadEntities();
     }
 
     // Fills the service with what the repository has stored. It does not save anything back.
-    private void load() {
+    private void loadEntities() {
         for (T element : repository.read()) {
             try {
                 put(element);
             } catch (IllegalArgumentException e) {
-                log.warning("Skipping customer: " + e.getMessage());
+                log.warning("Skipping element: " + e.getMessage());
             }
         }
     }
 
+    private void put(T element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Element cannot be null");
+        }
+        if (elements.containsKey(element.getId())) {
+            throw new IllegalArgumentException(
+                    "An element with id " + element.getId() + " already exists");
+        }
+        elements.put(element.getId(), element);
+    }
+
+    // Hands the whole collection to the repository
+    private void write() {
+        repository.write(list());
+    }
+
     public void add(T element) {
         put(element);
-        save();
+        write();
     }
 
     public Optional<T> findById(int id) {
@@ -46,27 +67,13 @@ public abstract class AbstractService<T extends Entity> {
         return List.copyOf(elements.values());
     }
 
-    // Returns true if a customer was removed
+    // Returns true if an element was removed
     public boolean remove(int id) {
         boolean removed = elements.remove(id) != null;
         if (removed) {
-            save();
+            write();
         }
         return removed;
     }
 
-    private void put(T element) {
-        if (element == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
-        if (elements.containsKey(element.getId())) {
-            throw new IllegalArgumentException(
-                    "A customer with id " + element.getId() + " already exists");
-        }
-        elements.put(element.getId(), element);
-    }
-
-    private void save() {
-        repository.save(list());
-    }
 }

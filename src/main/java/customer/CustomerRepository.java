@@ -7,13 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+
+import entity.AbstractRepository;
 
 // Repository: the only class that knows customers are stored as a CSV file. The service asks it
-// to load and save and never sees paths, headers or lines.
-public class CustomerRepository {
-    private static final Logger log = Logger.getLogger(CustomerRepository.class.getName());
-
+// to read and write and never sees paths, headers or lines. `log` comes from AbstractRepository.
+public class CustomerRepository extends AbstractRepository<Customer> {
     private static final String FILE_NAME = "customers.csv";
 
     private final Path file;
@@ -25,7 +24,8 @@ public class CustomerRepository {
 
     // Reads every valid customer. Invalid lines are logged and skipped; a missing or unreadable
     // file is logged and gives an empty list.
-    public List<Customer> load() {
+    @Override
+    public List<Customer> read() {
         List<Customer> customers = new ArrayList<>();
         List<String> lines;
         try {
@@ -49,7 +49,8 @@ public class CustomerRepository {
 
     // Writes all the customers, so changes survive a restart. It writes to a temporary file first
     // and then replaces the real one, so a failure never leaves it half written.
-    public void save(List<Customer> customers) {
+    @Override
+    public void write(List<Customer> customers) {
         Path temp = file.resolveSibling(FILE_NAME + ".tmp");
         List<String> lines = new ArrayList<>();
         lines.add(Customer.CSV_HEADER);

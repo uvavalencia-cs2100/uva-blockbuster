@@ -4,7 +4,8 @@ import java.util.Objects;
 
 import entity.Entity;
 
-// Entity: identified by its id, and never allowed to exist in an invalid state.
+// Entity: identified by its id (kept and validated by Entity), and never allowed to exist in an
+// invalid state. It knows its own CSV columns and its views, but nothing about storage.
 public final class Customer extends Entity {
     // First line of a customers CSV file. The columns, in order, are the ones fromCSVLine reads and
     // toCSVLine writes, so change all three together.

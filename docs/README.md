@@ -6,8 +6,9 @@ How the code is organised, and what happens when the app starts. The diagrams ar
 - [1. Entity, Service, Repository](#1-entity-service-repository)
 - [2. What happens at boot](#2-what-happens-at-boot)
 - [3. UML: the entities](#3-uml-the-entities)
-- [4. UML: Entity → Service → Repository (Customer)](#4-uml-entity--service--repository-customer)
-- [5. Adding a new entity](#5-adding-a-new-entity)
+- [4. UML: the base classes and the CSV file](#4-uml-the-base-classes-and-the-csv-file)
+- [5. UML: Entity → Service → Repository (Customer)](#5-uml-entity--service--repository-customer)
+- [6. Adding a new entity](#6-adding-a-new-entity)
 
 ## 1. Entity, Service, Repository
 
@@ -26,26 +27,47 @@ next to it.
                           └──── Entity ◄──┘
 ```
 
-**Entity.** Identified by its id and never allowed to exist in an invalid state: the constructor
-and the setters throw `IllegalArgumentException` for bad values, so a `Customer` you are holding
-is always valid. It also knows how to turn itself into a CSV line and back
+Each layer has a generic base class in the [entity](../src/main/java/entity) package, and each
+entity only adds what is specific to it:
+
+| Layer | Base class (package `entity`) | Customer's class (package `customer`) |
+|---|---|---|
+| Entity | `Entity` (id and its validation, `ViewOptions`) | `Customer` |
+| Service | `AbstractService<T extends Entity>` | `CustomerService` |
+| Repository | `AbstractRepository<T>` | `CustomerRepository` |
+
+**Entity.** Identified by its id (kept and validated, a positive integer, by the base class `Entity`) and
+never allowed to exist in an invalid state: the constructor and the setters throw `IllegalArgumentException` for bad values, so a `Customer` you are holding
+is always valid. The base class also requires three views of the entity (`getSingleLineView`, `getDetailedView`,
+`getLogView`, from `ViewOptions`). It also knows how to turn itself into a CSV line and back
 (`Customer.toCSVLine` / `Customer.fromCSVLine`), because only the class knows its own columns.
 
-**Service.** Owns the in-memory collection (a `Map` by id) and the rules about it, such as "two
-customers cannot share an id". Commands and menus only talk to the service. After every change
-(`add`, `remove`) the service hands the whole list to the repository, so callers never have to
-remember to save.
+**Service.** `AbstractService` owns the in-memory collection (a `Map` by id) and the rules about
+it, such as "two elements cannot share an id". It provides `add`, `findById`, `list` and
+`remove`, and it loads in its constructor. Commands and menus only talk to the service. After
+every change (`add`, `remove`) the service hands the whole list to the repository, so callers
+never have to remember to save. `CustomerService` has almost no code of its own: it only fixes
+the type to `Customer`, and is where rules that only customers have would go.
 
-**Repository.** Reads and writes the CSV file: the folder, the file name, the header, skipping
+**Repository.** `AbstractRepository` is only the contract: `read()` returns every stored element
+and `write(list)` stores them all. `CustomerRepository` implements it by reading and writing the
+CSV file: the folder, the file name, the header, skipping
 bad lines, and writing through a temporary file so a failure never leaves the file half written.
 If we moved to a database tomorrow, only this class would change.
+
+**Logging.** The base classes have a `protected final Logger log` created with
+`Logger.getLogger(getClass().getName())`. `getClass()` is the real class of the object, so even
+a message written in `AbstractService` is logged as `customer.CustomerService`. Subclasses use
+the inherited `log` and must not declare their own.
 
 Why bother? Each class has one reason to change, you can read one layer without understanding the
 others, and a bug has an obvious place to live: *wrong data* → entity, *wrong rules* → service,
 *wrong file* → repository.
 
-Status today: **Customer** has all three layers. **Movie** and **MovieCopy** are entities only;
-they get a service and a repository when they are ready (see [section 5](#5-adding-a-new-entity)).
+Status today: **Customer** is the only entity on this architecture, with all three layers.
+**Movie**, **MovieCopy** and **Rental** have not been moved to it yet: they do not extend
+`Entity` and have no service or repository. They will be migrated when they are ready (see
+[section 6](#6-adding-a-new-entity)).
 
 ## 2. What happens at boot
 
@@ -139,7 +161,8 @@ sequenceDiagram
     Ctx->>Ctx: getCustomerService() (first call)
     Ctx->>Repo: new CustomerRepository(data_path)
     Ctx->>Svc: new CustomerService(repository)
-    Svc->>Repo: load()
+    Note over Svc: AbstractService constructor
+    Svc->>Repo: read()
     Repo->>File: read all lines
     File-->>Repo: header + lines
     loop each line after the header
@@ -147,7 +170,7 @@ sequenceDiagram
     end
     Repo-->>Svc: List of Customer
     loop each customer
-        Svc->>Svc: put(customer)
+        Svc->>Svc: put(customer) (skips duplicates)
     end
     Svc-->>Ctx: ready, with every stored customer
 ```
@@ -167,27 +190,88 @@ the app starts with no customers.
 
 ```mermaid
 classDiagram
-    class Customer
+    class Customer {
+        -String name
+        -String email
+    }
     class Movie
     class MovieCopy
+    class Rental
     class MovieStatus {
         <<enumeration>>
     }
 
     MovieCopy "*" --> "1" Movie : is a copy of
     MovieCopy --> MovieStatus : has
+    Rental ..> MovieCopy
+    Rental ..> Customer
 ```
 
 Notes:
 
-- **Customer** is the finished entity. Its id never changes (it is `final`), `equals`/`hashCode`
-  use only the id (two customers are the same customer if they share an id), and the setters
-  validate. Names and emails cannot contain a comma, because that would corrupt the CSV.
-- **Movie** and **MovieCopy** are still being built: they have no service or
-  repository. A `Movie` is the film; each physical/rentable item is a `MovieCopy` that points to
-  its `Movie` and has a `MovieStatus`.
+- **Customer** is the finished entity. Its id never changes, `equals`/`hashCode` use only the id
+  (two customers are the same customer if they share an id), and the setters validate. Names and
+  emails cannot contain a comma, because that would corrupt the CSV.
+- **Movie**, **MovieCopy** and **Rental** are still the old, standalone classes: they do not
+  extend `Entity` yet and have no service or repository. A `Movie` is the film; each
+  physical/rentable item is a `MovieCopy` that points to its `Movie` and has a `MovieStatus`.
 
-## 4. UML: Entity → Service → Repository (Customer)
+## 4. UML: the base classes and the CSV file
+
+The generic part of the architecture, with no entity in particular: the three base classes in
+the [entity](../src/main/java/entity) package and the CSV file where the data ends up.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class ViewOptions {
+        <<interface>>
+        +getSingleLineView() String
+        +getDetailedView() String
+        +getLogView() String
+    }
+    class Entity {
+        <<abstract>>
+        -int id
+        #Entity(int id)
+        +getId() int
+    }
+    class AbstractService~T extends Entity~ {
+        <<abstract>>
+        -Map~Integer, T~ elements
+        -AbstractRepository~T~ repository
+        #AbstractService(AbstractRepository~T~ repository)
+        +add(T element)
+        +findById(int id) Optional~T~
+        +list() List~T~
+        +remove(int id) boolean
+    }
+    class AbstractRepository~T~ {
+        <<abstract>>
+        +read()* List~T~
+        +write(List~T~ elements)*
+    }
+    class csv_file["CSV file (e.g. customers.csv)"] {
+        <<file>>
+    }
+
+    ViewOptions <|.. Entity : implements
+    AbstractService "1" o-- "*" Entity : manages a kind of
+    AbstractService "1" --> "1" AbstractRepository : synchronizes changes
+    AbstractRepository ..> Entity : converts to / from lines
+    AbstractRepository "1" --> "1" csv_file : reads and writes
+```
+
+Notes:
+
+- `AbstractService` is the only class the rest of the app talks to. It keeps the entities in
+  memory and, after every `add` or `remove`, hands the whole list to the repository.
+- `AbstractRepository` is only a contract (`read` and `write`). The concrete subclass, e.g.
+  `CustomerRepository`, is the one that knows the CSV file: its path, header and columns.
+- The service never sees the file, and the file format never leaks above the repository.
+
+## 5. UML: Entity → Service → Repository (Customer)
 
 ```mermaid
 classDiagram
@@ -200,11 +284,22 @@ classDiagram
         <<singleton>>
     }
     class AppConfig
+    class AbstractService~T~ {
+        <<abstract>>
+        #Logger log
+    }
     class CustomerService {
         <<service>>
     }
+    class AbstractRepository~T~ {
+        <<abstract>>
+        #Logger log
+    }
     class CustomerRepository {
         <<repository>>
+    }
+    class Entity {
+        <<abstract>>
     }
     class Customer {
         <<entity>>
@@ -217,15 +312,19 @@ classDiagram
     AppContext *-- AppConfig
     AppContext *-- CustomerService : creates on first use
     AppContext ..> CustomerRepository : creates from data_path
-    CustomerService --> CustomerRepository : load / save
-    CustomerService o-- "*" Customer
+    AbstractService <|-- CustomerService
+    AbstractRepository <|-- CustomerRepository
+    Entity <|-- Customer
+    AbstractService --> AbstractRepository : read / write
+    AbstractService o-- "*" Entity
     CustomerRepository ..> Customer : reads and writes
     CustomerRepository --> customers_csv
 ```
 
 Reading it left to right: the commands ask the `AppContext` for the service; the service keeps
-the customers and the rules; the repository turns them into lines of `customers.csv` and back,
-using the `Customer` methods that know the columns.
+the customers and the rules (inherited from `AbstractService`); it only knows the repository
+through `AbstractRepository`, and `CustomerRepository` turns the customers into lines of
+`customers.csv` and back, using the `Customer` methods that know the columns.
 
 What happens when the user adds a customer:
 
@@ -241,8 +340,8 @@ sequenceDiagram
     User->>Cmd: Id, Name, Email
     Cmd->>Cust: new Customer(id, name, email)
     Cmd->>Svc: add(customer)
-    Svc->>Svc: put(customer)
-    Svc->>Repo: save(list of all customers)
+    Svc->>Svc: put(customer) (inherited)
+    Svc->>Repo: write(list of all customers)
     Repo->>Cust: toCSVLine(customer) for each
     Repo->>File: write customers.csv
     Cmd-->>User: "Customer added" (log frame)
@@ -252,13 +351,17 @@ Each layer rejects what it is responsible for: the **entity** rejects invalid va
 **service** rejects duplicates, and the **repository** is the only one that can fail on the disk
 (that is logged as an error and the change stays in memory).
 
-## 5. Adding a new entity
+## 6. Adding a new entity
 
-For example, Movie, once it is ready:
+For example, Movie, once it is ready. The base classes do most of the work:
 
-1. **Entity**: a validated class with an id, `fromCSVLine` and `toCSVLine`, and a `CSV_HEADER`.
-2. **Repository**: `MovieRepository(String dataPath)` with `load()` and `save(List<Movie>)`.
-3. **Service**: `MovieService(MovieRepository)`; load in the constructor, save after each change.
+1. **Entity**: make it `extends Entity` (so it gets the id and `ViewOptions`), validated, with
+   `fromCSVLine`, `toCSVLine` and a `CSV_HEADER`.
+2. **Repository**: `MovieRepository extends AbstractRepository<Movie>`, with a
+   `MovieRepository(String dataPath)` constructor and the `read()` and `write(List<Movie>)`
+   methods. Use the inherited `log`.
+3. **Service**: `MovieService extends AbstractService<Movie>` whose constructor only calls
+   `super(repository)`. Add only the rules that are specific to movies.
 4. **AppContext**: a `getMovieService()` built on first use, like the customer one, and one more
    line in `loadData()` so it loads at boot.
 5. **Commands**: menus call the service through `AppContext`; they never touch the repository.

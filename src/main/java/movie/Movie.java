@@ -1,15 +1,18 @@
 package movie;
 
-// Never allowed to exist in an invalid state: the constructor and the setters validate every value.
-public final class Movie {
-    public static final String CSV_HEADER = "id,title,director,year,length,genre,rating";
+import java.util.Objects;
 
+import common.Entity;
+
+// Entity: identified by its id (kept and validated by Entity), and never allowed to exist in an
+// invalid state. It knows its views, but nothing about storage: how it is stored in a CSV file is
+// described by MovieCSV.
+public final class Movie extends Entity {
     private static final int MIN_YEAR = 1900;
     private static final int MAX_YEAR = 2027;
     private static final int MAX_LENGTH = 500;
     private static final int MAX_RATING = 10;
 
-    private final int id;
     private String title;
     private String director;
     private int year;
@@ -19,20 +22,13 @@ public final class Movie {
 
     public Movie(
             int id, String title, String director, int year, int length, String genre, int rating) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Id must be a positive integer");
-        }
-        this.id = id;
+        super(id);
         setTitle(title);
         setDirector(director);
         setYear(year);
         setLength(length);
         setGenre(genre);
         setRating(rating);
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getTitle() {
@@ -109,37 +105,42 @@ public final class Movie {
         return value.trim();
     }
 
-    public static Movie fromCSVLine(String line) {
-        // Fields are in the order: id, title, director, year, length, genre, rating
-        String[] fields = line.split(",");
-        if (fields.length != 7) {
-            throw new IllegalArgumentException("CSV line must have exactly 7 fields");
-        }
-        int id;
-        int year;
-        int length;
-        int rating;
-        try {
-            id = Integer.parseInt(fields[0].trim());
-            year = Integer.parseInt(fields[3].trim());
-            length = Integer.parseInt(fields[4].trim());
-            rating = Integer.parseInt(fields[6].trim());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(
-                    "Id, year, length, and rating must be valid integers", e);
-        }
-        return new Movie(id, fields[1], fields[2], year, length, fields[5], rating);
+    // Two movies are the same movie if they share an id
+    @Override 
+    public boolean equals(Object object) {
+        if (object == null) return false;
+        if (this == object) return true;
+        if (object instanceof Movie) {
+            Movie otherMovie = (Movie) object;
+            return this.getId() == otherMovie.getId();
+        } 
+        return false;
     }
 
-    public String toCSVLine() {
-        return String.join(
-                ",",
-                String.valueOf(id),
-                title,
-                director,
-                String.valueOf(year),
-                String.valueOf(length),
-                genre,
-                String.valueOf(rating));
+    @Override 
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override 
+    public String toString() {
+        return String.format(
+                "Movie #%d: title='%s', director='%s', year=%d, length=%d, genre='%s', rating=%d",
+                getId(), title, director, year, length, genre, rating);
+    }
+
+    @Override
+    public String getSingleLineView() {
+        return String.format("Id: #%d, %s (%d) - %s, %d min, Genre: %s, Rating: %d/%d", getId(), title, year, director, length, genre, rating, MAX_RATING);
+    }
+
+    @Override
+    public String getDetailedView() {
+        return String.format("Id: #%d\nTitle: %s\nDirector: %s\nYear: %d\nLength: %d min\nGenre: %s\nRating: %d/%d", getId(), title, director, year, length, genre, rating, MAX_RATING);
+    }
+
+    @Override
+    public String getLogView() {
+        return String.format("Movie Entity - Id: #%d, title=%s, director=%s, year=%d, length=%d, genre=%s, rating=%d", getId(), title, director, year, length, genre, rating);
     }
 }

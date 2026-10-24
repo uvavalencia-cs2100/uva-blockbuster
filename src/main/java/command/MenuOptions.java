@@ -23,9 +23,10 @@ public class MenuOptions {
 
         movieCommands =
                 List.of(
-                        new Command('a', "Add new Movie", MenuRunner::placeholder),
-                        new Command('l', "List Movies", MenuRunner::placeholder),
-                        new Command('d', "Delete Movies", MenuRunner::placeholder),
+                        new Command('a', "Add new Movie", MovieCommands::addMovie),
+                        new Command('l', "List Movies", MovieCommands::listMovies),
+                        new Command('s', "Show Movie", MovieCommands::showMovie),
+                        new Command('d', "Delete Movies", MovieCommands::deleteMovie),
                         MenuRunner.BACK,
                         MenuRunner.HELP);
 
@@ -50,7 +51,11 @@ public class MenuOptions {
                         new Command(
                                 'm',
                                 "Movie Options",
-                                () -> MenuRunner.runMenu("Movie Options", movieCommands)),
+                                () -> 
+                                        MenuRunner.runMenu(
+                                                "Movie Options", 
+                                                movieCommands,
+                                                this::movieStatus)),
                         new Command(
                                 'r',
                                 "Rental Options",
@@ -61,6 +66,10 @@ public class MenuOptions {
 
     private String customerStatus() {
         return "Customers: " + AppContext.getInstance().getCustomerService().list().size();
+    }
+
+    private String movieStatus() {
+        return "Movies: " + AppContext.getInstance().getMovieService().list().size();
     }
 
     // Shows the main menu and runs until the user quits

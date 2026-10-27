@@ -64,8 +64,8 @@ Why bother? Each class has one reason to change, you can read one layer without 
 others, and a bug has an obvious place to live: *wrong data* → entity, *wrong rules* → service,
 *wrong file* → repository.
 
-Status today: **Customer** is the only entity on this architecture, with all three layers.
-**Movie**, **MovieCopy** and **Rental** have not been moved to it yet: they do not extend
+Status today: **Customer** and **Movie** are the entities on this architecture, with all three layers.
+**MovieCopy** and **Rental** have not been moved to it yet: they do not extend
 `Entity` and have no service or repository. They will be migrated when they are ready (see
 [section 6](#6-adding-a-new-entity)).
 

@@ -131,12 +131,12 @@ public final class Movie extends Entity {
 
     @Override
     public String getSingleLineView() {
-        return String.format("Id: #%d, %s (%d) - %s, %d min, Genre: %s, Rating: %d/10", getId(), title, year, director, length, genre, rating);
+        return String.format("Id: #%d, %s (%d) - %s, %d min, Genre: %s, Rating: %d/%d", getId(), title, year, director, length, genre, rating, MAX_RATING);
     }
 
     @Override
     public String getDetailedView() {
-        return String.format("Id: #%d\nTitle: %s\nDirector: %s\nYear: %d\nLength: %d min\nGenre: %s\nRating: %d/10", getId(), title, director, year, length, genre, rating);
+        return String.format("Id: #%d\nTitle: %s\nDirector: %s\nYear: %d\nLength: %d min\nGenre: %s\nRating: %d/%d", getId(), title, director, year, length, genre, rating, MAX_RATING);
     }
 
     @Override

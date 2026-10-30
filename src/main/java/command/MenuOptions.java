@@ -8,6 +8,7 @@ import java.util.List;
 public class MenuOptions {
     private final List<Command> customerCommands;
     private final List<Command> movieCommands;
+    private final List<Command> movieCopyCommands;
     private final List<Command> rentalCommands;
     private final List<Command> mainCommands;
 
@@ -29,6 +30,15 @@ public class MenuOptions {
                         new Command('d', "Delete Movies", MovieCommands::deleteMovie),
                         MenuRunner.BACK,
                         MenuRunner.HELP);
+
+        movieCopyCommands =
+                List.of(
+                        new Command('a', "Add new Movie Copy", MovieCopyCommands::addMovieCopy),
+                        new Command('l', "List Movie Copies", MovieCopyCommands::listMovieCopies),
+                        new Command('s', "Show Movie Copy", MovieCopyCommands::showMovieCopy),
+                        new Command('d', "Delete Movies Copy", MovieCopyCommands::deleteMovieCopy),
+                        MenuRunner.BACK,
+                        MenuRunner.HELP);                        
 
         rentalCommands =
                 List.of(
@@ -57,6 +67,14 @@ public class MenuOptions {
                                                 movieCommands,
                                                 this::movieStatus)),
                         new Command(
+                                'x',
+                                "Movie Copy Options",
+                                () ->
+                                        MenuRunner.runMenu(
+                                                "Movie Copy Options",
+                                                movieCopyCommands,
+                                                this::movieCopyStatus)),
+                        new Command(
                                 'r',
                                 "Rental Options",
                                 () -> MenuRunner.runMenu("Rental Options", rentalCommands)),
@@ -70,6 +88,10 @@ public class MenuOptions {
 
     private String movieStatus() {
         return "Movies: " + AppContext.getInstance().getMovieService().list().size();
+    }
+
+    private String movieCopyStatus() {
+        return "Movie Copies: " + AppContext.getInstance().getMovieCopyService().list().size();
     }
 
     // Shows the main menu and runs until the user quits

@@ -1,29 +1,27 @@
 package rental;
-
+import common.Entity;
 import customer.Customer;
-
+import movie.Movie;
 import movie.MovieCopy;
-import movie.MovieStatus;
 
-import java.util.Date;
+import java.util.*;
 
-public final class Rental {
+public final class Rental extends Entity{
     private static final long RENTAL_TIME = 14L * 24 * 60 * 60 * 1000;
 
-    private final int id;
-    private final Customer customer;
-    private final MovieCopy movieCopy;
+    private int id;
+    private Customer customer;
+    private MovieCopy movieCopy;
     private Date rentalDate;
     private Date returnDate;
-    private MovieStatus status;
+    private RentalStatus rentalStatus;
+    
 
-    public Rental(
-            int id,
-            Customer customer,
-            MovieCopy movieCopy,
-            Date rentalDate,
-            Date returnDate,
-            MovieStatus status) {
+    public Rental(int id, MovieCopy movieCopy, Customer customer, RentalStatus rentalStatus){
+        super(id);
+        this.movieCopy = movieCopy;
+        this.customer = customer;
+        this.rentalStatus = rentalStatus;
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a positive integer");
         }
@@ -33,15 +31,7 @@ public final class Rental {
         if (movieCopy == null) {
             throw new IllegalArgumentException("Movie copy cannot be null");
         }
-        this.id = id;
-        this.customer = customer;
-        this.movieCopy = movieCopy;
-        setRentalDate(rentalDate);
-        this.status = MovieStatus.RENTED;
-    }
-
-    public int getId() {
-        return id;
+        
     }
 
     // sets the rental date and the return date to 14 days after the rental date
@@ -55,24 +45,36 @@ public final class Rental {
 
     // gets the rental date
     public Date getRentalDate() {
-        return rentalDate;
+        return this.rentalDate;
     }
 
-    public Customer getCustomer() {
-        return this.customer;
+    // Gets the name
+    public String getName(){
+        return customer.getName();
+    }
+    
+    // Gets the title
+    public Movie getTitle(){
+        return movieCopy.getMovie();
     }
 
-    public void returnCopy() {
-        this.status = MovieStatus.AVAILABLE;
-        movieCopy.setStatus(this.status);
+    // Gets the email
+    public String getEmail(){
+        return customer.getEmail();
     }
 
-    public void markLost() {
-        this.status = MovieStatus.LOST;
-        movieCopy.setStatus(this.status);
+     @Override
+    public String getSingleLineView() {
+        return String.format("Id: #%d, name: %s email: <%s>, Movie #%d: title='%s', Id: #%d", getId(), movieCopy.getMovie(), customer.getEmail(), customer.getName(), id);
     }
 
-    public MovieStatus getStatus() {
-        return status;
+    @Override
+    public String getDetailedView() {
+        return String.format("Id: #%d:\nName: %s\nEmail: <%s>\nId: #%d\\nTitle: %s", getId(), movieCopy.getMovie(), customer.getEmail(), customer.getName(), id);
+    }
+
+    @Override
+    public String getLogView() {
+        return String.format("Rental Entity - Id: #%d, Name: %s, Email: <%s>, title=%s,", getId(), movieCopy.getMovie(), customer.getEmail(), customer.getName(), id);
     }
 }

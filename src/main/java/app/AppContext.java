@@ -6,6 +6,8 @@ import customer.CustomerRepository;
 import customer.CustomerService;
 import movie.MovieRepository;
 import movie.MovieService;
+import movie.MovieCopyRepository;
+import movie.MovieCopyService;
 
 import java.util.logging.Logger;
 
@@ -19,6 +21,7 @@ public class AppContext {
     // Created on first use, once the config is final, because creating it loads the entities
     private CustomerService customerService;
     private MovieService movieService;
+    private MovieCopyService movieCopyService;
 
     private AppContext() {}
 
@@ -34,6 +37,7 @@ public class AppContext {
         // the first call creates it, and that loads the entities
         getCustomerService(); 
         getMovieService(); 
+        getMovieCopyService();
     }
 
     public CustomerService getCustomerService() {
@@ -50,6 +54,13 @@ public class AppContext {
         return movieService;
     }
 
+    public MovieCopyService getMovieCopyService() {
+        if (movieCopyService == null) {
+            movieCopyService = new MovieCopyService(new MovieCopyRepository(config.getDataPath(), getMovieService()));
+        }
+        return movieCopyService;
+    }
+
     public AppConfig getConfig() {
         return config;
     }
@@ -64,5 +75,6 @@ public class AppContext {
         this.config = config;
         this.customerService = null;
         this.movieService = null;
+        this.movieCopyService = null;
     }
 }

@@ -11,17 +11,17 @@ public final class Rental extends Entity{
 
     private int id;
     private Customer customer;
-    private Movie movie;
     private MovieCopy movieCopy;
-    private String name;
-    private String title;
-    private String email;
     private Date rentalDate;
     private Date returnDate;
+    private RentalStatus rentalStatus;
     
 
-    public Rental(int id, String name, String email, String title){
+    public Rental(int id, MovieCopy movieCopy, Customer customer, RentalStatus rentalStatus){
         super(id);
+        this.movieCopy = movieCopy;
+        this.customer = customer;
+        this.rentalStatus = rentalStatus;
         if (id <= 0) {
             throw new IllegalArgumentException("Id must be a positive integer");
         }
@@ -31,6 +31,7 @@ public final class Rental extends Entity{
         if (movieCopy == null) {
             throw new IllegalArgumentException("Movie copy cannot be null");
         }
+        
     }
 
     // sets the rental date and the return date to 14 days after the rental date
@@ -44,36 +45,36 @@ public final class Rental extends Entity{
 
     // gets the rental date
     public Date getRentalDate() {
-        return rentalDate;
+        return this.rentalDate;
     }
 
-    // Gets the name, but not from customer class (which I want)
+    // Gets the name
     public String getName(){
         return customer.getName();
     }
     
-    // Gets the title, but not from the movie class (which I want)
-    public String getTitle(){
-        return movie.getTitle();
+    // Gets the title
+    public Movie getTitle(){
+        return movieCopy.getMovie();
     }
 
-    // Gets the email, but not from the customer class (which I want)
+    // Gets the email
     public String getEmail(){
         return customer.getEmail();
     }
 
      @Override
     public String getSingleLineView() {
-        return String.format("Id: #%d, name: %s email: <%s>, Movie #%d: title='%s', Id: #%d", getId(), name, email, title, id);
+        return String.format("Id: #%d, name: %s email: <%s>, Movie #%d: title='%s', Id: #%d", getId(), movieCopy.getMovie(), customer.getEmail(), customer.getName(), id);
     }
 
     @Override
     public String getDetailedView() {
-        return String.format("Id: #%d:\nName: %s\nEmail: <%s>\nId: #%d\\nTitle: %s", getId(), name, email, title, id);
+        return String.format("Id: #%d:\nName: %s\nEmail: <%s>\nId: #%d\\nTitle: %s", getId(), movieCopy.getMovie(), customer.getEmail(), customer.getName(), id);
     }
 
     @Override
     public String getLogView() {
-        return String.format("Rental Entity - Id: #%d, Name: %s, Email: <%s>, title=%s,", getId(), name, email, title, id);
+        return String.format("Rental Entity - Id: #%d, Name: %s, Email: <%s>, title=%s,", getId(), movieCopy.getMovie(), customer.getEmail(), customer.getName(), id);
     }
 }

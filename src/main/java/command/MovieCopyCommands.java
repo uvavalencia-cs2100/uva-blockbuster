@@ -74,7 +74,8 @@ public class MovieCopyCommands {
         try {
             int id = Integer.parseInt(MenuRunner.prompt("Id of the movie copy to delete: "));
             Optional<MovieCopy> movieCopy = movieCopyService().findById(id);
-            if (movieCopy.isPresent() && movieCopyService().remove(id)) {
+            if (movieCopy.isPresent()) {
+                movieCopyService().remove(id)
                 log.info("Deleted " + movieCopy.get().getLogView());
             } else {
                 log.warning("No movie copy with id " + id);

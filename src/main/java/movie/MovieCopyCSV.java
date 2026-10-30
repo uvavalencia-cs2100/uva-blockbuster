@@ -10,10 +10,10 @@ import common.CsvRow;
 // method must do.
 public class MovieCopyCSV implements CsvMapping<MovieCopy> {
     
-    private final MovieService movies;
+    private final MovieService movieService;
 
-    public MovieCopyCSV(MovieService movies) {
-        this.movies = movies;
+    public MovieCopyCSV(MovieService movieService) {
+        this.movieService = movieService;
     }
 
 
@@ -25,7 +25,8 @@ public class MovieCopyCSV implements CsvMapping<MovieCopy> {
     @Override
     public List<String> toFields(MovieCopy movieCopy) {
         return List.of(
-                String.valueOf(movieCopy.getId()), String.valueOf(movieCopy.getMovie().getId()), String.valueOf(movieCopy.getStatus().getValue()), String.valueOf(movieCopy.getCopyNumber()));
+                movieCopy.getId(), movieCopy.getMovie().getId(), movieCopy.getStatus().getValue(), movieCopy.getCopyNumber()).stream()
+                .map(String::valueOf).toList();       
     }
 
     // The MovieCopy constructor validates the values, so an invalid line throws
@@ -34,7 +35,7 @@ public class MovieCopyCSV implements CsvMapping<MovieCopy> {
     public MovieCopy fromCSVRow(CsvRow row) {
         
         int movieId = row.getInt("movieId");
-        Movie movie = movies.findById(movieId)
+        Movie movie = movieService.findById(movieId)
             .orElseThrow(() -> new IllegalArgumentException("No movie with id " + movieId));
         return new MovieCopy(row.getInt("id"), movie,
             MovieStatus.fromValue(row.getInt("status")), row.getInt("copyNumber"));

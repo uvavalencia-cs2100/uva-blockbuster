@@ -8,6 +8,7 @@ import customer.CustomerCSV;
 import customer.CustomerService;
 import movie.Movie;
 import movie.MovieCopy;
+import movie.MovieCopyService;
 import movie.MovieStatus;
 
 
@@ -17,14 +18,11 @@ import movie.MovieStatus;
 // See CsvMapping for what each method must do.
 public class RentalCSV implements  CsvMapping<Rental> {
 
-    private CustomerService customerService;
-    private MovieCopyService movieCopyService;
+    private final CustomerService customerService;
+    private final MovieCopyService movieCopyService;
 
-    public MovieCopyCSV(MovieCopyService movieCopyService){
-            this.movieCopyService = movieCopyService;
-    }
-
-    public CustomerCSV(CustomerService customerService){
+    public RentalCSV(MovieCopyService movieCopyService, CustomerService customerService){
+        this.movieCopyService = movieCopyService;
         this.customerService = customerService;
     }
 
@@ -35,9 +33,12 @@ public class RentalCSV implements  CsvMapping<Rental> {
 
     @Override 
     public List<String> toFields(Rental rental) {
+        String movieCopyId = String.valueOf(rental.getMovieCopy().getId());
+        String customerId = String.valueOf(rental.getCustomer().getId());
         return List.of(
-            rental.getId(), movieCopy.getMovie().getId(), movieCopy.getStatus().getValue(), movieCopy.getCopyNumber()).stream()
-                .map(String::valueOf).toList();
+            rental.getId(), customerId, movieCopyId, rental.getRentalStatus().getValue())
+            .stream()
+            .map(String::valueOf).toList();
 
     }
     
@@ -47,20 +48,11 @@ public class RentalCSV implements  CsvMapping<Rental> {
     public Rental fromCSVRow(CsvRow row) {
 
         int rentalId = row.getInt("id");
-        Rental rental = rental.findById(rentalId)
-            .orElseThrow(() -> new IllegalArgumentException("No movie with id " + movieId));
-        return new Rental(row.getInt("id"), 
-                            movieCopyService.valueOf(row.getString("title")),
-                            customerService.valueOf(row.getString("name"),
-                            row.getString("title")),
-                            row.getString("status")
-                        );
-        // return new Rental(
-        //         row.getInt("id"),
-        //         row.getString("title"),
-        //         row.getString("name")
-        //         //row.getString("email") 
-            
-        // );
+        Customer customer = customerService.findById(row.getInt("customerId"))
+            .orElseThrow(() -> new IllegalArgumentException("No customer with id " + row.getInt("customerId")));
+        MovieCopy movieCopy = movieCopyService.findById(row.getInt("movieCopyId"))
+            .orElseThrow(() -> new IllegalArgumentException("No movie copy with id " + row.getInt("movieCopyId")));
+        RentalStatus status = RentalStatus.fromValue(row.getInt("status"));
+        return new Rental(rentalId, customer, movieCopy , status);
     }
 }

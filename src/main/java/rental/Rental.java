@@ -17,7 +17,7 @@ public final class Rental extends Entity{
     private RentalStatus rentalStatus;
     
 
-    public Rental(int id, MovieCopy movieCopy, Customer customer, RentalStatus rentalStatus){
+    public Rental(int id, Customer customer, MovieCopy movieCopy, RentalStatus rentalStatus){
         super(id);
         this.movieCopy = movieCopy;
         this.customer = customer;
@@ -34,6 +34,18 @@ public final class Rental extends Entity{
         
     }
 
+    public RentalStatus getRentalStatus() {
+        return this.rentalStatus;
+    }
+
+    public Customer getCustomer() {
+        return this.customer;
+    }
+
+    public MovieCopy getMovieCopy() {
+        return this.movieCopy;
+    }
+
     // sets the rental date and the return date to 14 days after the rental date
     public void setRentalDate(Date rentalDate) {
         if (rentalDate == null) {
@@ -48,20 +60,7 @@ public final class Rental extends Entity{
         return this.rentalDate;
     }
 
-    // Gets the name
-    public String getName(){
-        return customer.getName();
-    }
-    
-    // Gets the title
-    public Movie getTitle(){
-        return movieCopy.getMovie();
-    }
 
-    // Gets the email
-    public String getEmail(){
-        return customer.getEmail();
-    }
 
      @Override
     public String getSingleLineView() {

@@ -19,19 +19,22 @@ public final class Rental extends Entity{
 
     public Rental(int id, Customer customer, MovieCopy movieCopy, RentalStatus rentalStatus){
         super(id);
-        this.movieCopy = movieCopy;
-        this.customer = customer;
-        this.rentalStatus = rentalStatus;
-        if (id <= 0) {
-            throw new IllegalArgumentException("Id must be a positive integer");
-        }
         if (customer == null) {
             throw new IllegalArgumentException("Customer cannot be null");
         }
         if (movieCopy == null) {
             throw new IllegalArgumentException("Movie copy cannot be null");
         }
-        
+       if (rentalStatus == null) {
+            throw new IllegalArgumentException("Rental status cannot be null");
+        }
+        this.movieCopy = movieCopy;
+        this.customer = customer;
+        this.rentalStatus = rentalStatus;
+        this.rentalDate = new Date();
+        this.returnDate = new Date(this.rentalDate.getTime() + RENTAL_TIME);
+
+
     }
 
     public RentalStatus getRentalStatus() {

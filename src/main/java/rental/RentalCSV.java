@@ -17,8 +17,8 @@ import movie.MovieStatus;
 // See CsvMapping for what each method must do.
 public class RentalCSV implements  CsvMapping<Rental> {
 
-    private final CustomerService = customerService;
-    private final MovieCopyService = movieCopyService;
+    private CustomerService customerService;
+    private MovieCopyService movieCopyService;
 
     public MovieCopyCSV(MovieCopyService movieCopyService){
             this.movieCopyService = movieCopyService;
@@ -34,7 +34,7 @@ public class RentalCSV implements  CsvMapping<Rental> {
     }
 
     @Override 
-    public List<String> toFields(Rental rental, MovieCopy movieCopy, Customer customer) {
+    public List<String> toFields(Rental rental) {
         return List.of(
             rental.getId(), movieCopy.getMovie().getId(), movieCopy.getStatus().getValue(), movieCopy.getCopyNumber()).stream()
                 .map(String::valueOf).toList();

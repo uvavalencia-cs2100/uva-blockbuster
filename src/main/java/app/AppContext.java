@@ -8,6 +8,8 @@ import movie.MovieRepository;
 import movie.MovieService;
 import rental.RentalRepository;
 import rental.RentalService;
+import movie.MovieCopyRepository;
+import movie.MovieCopyService;
 
 import java.util.logging.Logger;
 
@@ -22,6 +24,7 @@ public class AppContext {
     private CustomerService customerService;
     private MovieService movieService;
     private RentalService rentalService;
+    private MovieCopyService movieCopyService;
 
     private AppContext() {}
 
@@ -38,6 +41,7 @@ public class AppContext {
         getCustomerService(); 
         getMovieService(); 
         getRentalService();
+        getMovieCopyService();
     }
 
     public CustomerService getCustomerService() {
@@ -60,6 +64,13 @@ public class AppContext {
         }
         return rentalService;
     }
+    
+    public MovieCopyService getMovieCopyService() {
+        if (movieCopyService == null) {
+            movieCopyService = new MovieCopyService(new MovieCopyRepository(config.getDataPath(), getMovieService()));
+        }
+        return movieCopyService;
+    }
 
     public AppConfig getConfig() {
         return config;
@@ -75,5 +86,6 @@ public class AppContext {
         this.config = config;
         this.customerService = null;
         this.movieService = null;
+        this.movieCopyService = null;
     }
 }

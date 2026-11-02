@@ -1,17 +1,17 @@
 package movie;
 
+import java.util.Objects;
+
+import common.Entity;
+
 // Never allowed to exist in an invalid state: the constructor and the setters validate every value.
-public final class MovieCopy {
-    private final int id;
+public final class MovieCopy extends Entity {
     private Movie movie;
     private MovieStatus status;
     private int copyNumber;
 
     public MovieCopy(int id, Movie movie, MovieStatus status, int copyNumber) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Id must be a positive integer");
-        }
-        this.id = id;
+        super(id);
         setMovie(movie);
         setStatus(status);
         setCopyNumber(copyNumber);
@@ -28,9 +28,6 @@ public final class MovieCopy {
         this.movie = movie;
     }
 
-    public int getId() {
-        return id;
-    }
 
     public MovieStatus getStatus() {
         return status;
@@ -52,5 +49,44 @@ public final class MovieCopy {
             throw new IllegalArgumentException("Copy number must be a positive integer");
         }
         this.copyNumber = copyNumber;
+    }
+
+
+    // Two movie copies are the same movie copy if they share an id
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) return false;
+        if (this == object) return true;
+        if (object instanceof MovieCopy) {
+            MovieCopy otherMovieCopy = (MovieCopy) object;
+            return this.getId() == otherMovieCopy.getId();
+        }
+        return false;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Movie Copy #%d <%d>: %s - %s", getId(), copyNumber, movie.getTitle(), status);
+    }
+
+    @Override
+    public String getSingleLineView() {
+        return String.format("Id: #%d, copy number: %d, title: %s status: <%s>", getId(), copyNumber, movie.getTitle(), status);
+    }
+
+    @Override
+    public String getDetailedView() {
+        return String.format("Id: #%d:\nCopy number: %d\nTitle: %s\nStatus: <%s>", getId(), copyNumber, movie.getTitle(), status);
+    }
+
+    @Override
+    public String getLogView() {
+        return String.format("Movie Copy Entity - Id: #%d, Copy Number: %d, Title: %s, Status: <%s>", getId(), copyNumber, movie.getTitle(), status);
     }
 }

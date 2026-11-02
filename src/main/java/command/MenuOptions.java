@@ -8,6 +8,7 @@ import java.util.List;
 public class MenuOptions {
     private final List<Command> customerCommands;
     private final List<Command> movieCommands;
+    private final List<Command> movieCopyCommands;
     private final List<Command> rentalCommands;
     private final List<Command> mainCommands;
 
@@ -23,11 +24,21 @@ public class MenuOptions {
 
         movieCommands =
                 List.of(
-                        new Command('a', "Add new Movie", MenuRunner::placeholder),
-                        new Command('l', "List Movies", MenuRunner::placeholder),
-                        new Command('d', "Delete Movies", MenuRunner::placeholder),
+                        new Command('a', "Add new Movie", MovieCommands::addMovie),
+                        new Command('l', "List Movies", MovieCommands::listMovies),
+                        new Command('s', "Show Movie", MovieCommands::showMovie),
+                        new Command('d', "Delete Movies", MovieCommands::deleteMovie),
                         MenuRunner.BACK,
                         MenuRunner.HELP);
+
+        movieCopyCommands =
+                List.of(
+                        new Command('a', "Add new Movie Copy", MovieCopyCommands::addMovieCopy),
+                        new Command('l', "List Movie Copies", MovieCopyCommands::listMovieCopies),
+                        new Command('s', "Show Movie Copy", MovieCopyCommands::showMovieCopy),
+                        new Command('d', "Delete Movies Copy", MovieCopyCommands::deleteMovieCopy),
+                        MenuRunner.BACK,
+                        MenuRunner.HELP);                        
 
         rentalCommands =
                 List.of(
@@ -50,7 +61,19 @@ public class MenuOptions {
                         new Command(
                                 'm',
                                 "Movie Options",
-                                () -> MenuRunner.runMenu("Movie Options", movieCommands)),
+                                () -> 
+                                        MenuRunner.runMenu(
+                                                "Movie Options", 
+                                                movieCommands,
+                                                this::movieStatus)),
+                        new Command(
+                                'x',
+                                "Movie Copy Options",
+                                () ->
+                                        MenuRunner.runMenu(
+                                                "Movie Copy Options",
+                                                movieCopyCommands,
+                                                this::movieCopyStatus)),
                         new Command(
                                 'r',
                                 "Rental Options",
@@ -61,6 +84,14 @@ public class MenuOptions {
 
     private String customerStatus() {
         return "Customers: " + AppContext.getInstance().getCustomerService().list().size();
+    }
+
+    private String movieStatus() {
+        return "Movies: " + AppContext.getInstance().getMovieService().list().size();
+    }
+
+    private String movieCopyStatus() {
+        return "Movie Copies: " + AppContext.getInstance().getMovieCopyService().list().size();
     }
 
     // Shows the main menu and runs until the user quits

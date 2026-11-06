@@ -40,8 +40,8 @@ public class AppContext {
         // the first call creates it, and that loads the entities
         getCustomerService(); 
         getMovieService(); 
-        getRentalService();
         getMovieCopyService();
+        getRentalService();
     }
 
     public CustomerService getCustomerService() {
@@ -57,19 +57,19 @@ public class AppContext {
         }
         return movieService;
     }
-
-    public RentalService getRentalService() {
-        if (rentalService == null) {
-            rentalService = new RentalService(new RentalRepository(config.getDataPath()));
-        }
-        return rentalService;
-    }
     
     public MovieCopyService getMovieCopyService() {
         if (movieCopyService == null) {
             movieCopyService = new MovieCopyService(new MovieCopyRepository(config.getDataPath(), getMovieService()));
         }
         return movieCopyService;
+    }
+
+    public RentalService getRentalService() {
+        if (rentalService == null) {
+            rentalService = new RentalService(new RentalRepository(config.getDataPath(), getCustomerService(), getMovieCopyService()));
+        }
+        return rentalService;
     }
 
     public AppConfig getConfig() {
@@ -87,5 +87,6 @@ public class AppContext {
         this.customerService = null;
         this.movieService = null;
         this.movieCopyService = null;
+        this.rentalService = null;
     }
 }

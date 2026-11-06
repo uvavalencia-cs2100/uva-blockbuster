@@ -4,12 +4,12 @@ import java.util.*;
 import common.CsvMapping;
 import common.CsvRow;
 import customer.Customer;
-import customer.CustomerCSV;
+
 import customer.CustomerService;
-import movie.Movie;
+
 import movie.MovieCopy;
 import movie.MovieCopyService;
-import movie.MovieStatus;
+
 
 
 
@@ -21,24 +21,24 @@ public class RentalCSV implements  CsvMapping<Rental> {
     private final CustomerService customerService;
     private final MovieCopyService movieCopyService;
 
-    public RentalCSV(MovieCopyService movieCopyService, CustomerService customerService){
+    public RentalCSV(CustomerService customerService, MovieCopyService movieCopyService){
         this.movieCopyService = movieCopyService;
         this.customerService = customerService;
     }
 
     @Override 
     public List<String> getCSVColumnNames() {
-        return List.of("id", "name", "email", "title", "status");
+        return List.of("id", "customerId", "movieCopyId", "rentalDate", "dueDate", "status");
     }
 
     @Override 
     public List<String> toFields(Rental rental) {
         String movieCopyId = String.valueOf(rental.getMovieCopy().getId());
         String customerId = String.valueOf(rental.getCustomer().getId());
+        String rentalDate = String.valueOf(rental.getRentalDate());
+        String dueDate = String.valueOf(rental.getReturnDate());
         return List.of(
-            rental.getId(), customerId, movieCopyId, rental.getRentalStatus().getValue())
-            .stream()
-            .map(String::valueOf).toList();
+            String.valueOf(rental.getId()), customerId, movieCopyId, rentalDate, dueDate, String.valueOf(rental.getRentalStatus().getValue()));
 
     }
     
@@ -52,7 +52,9 @@ public class RentalCSV implements  CsvMapping<Rental> {
             .orElseThrow(() -> new IllegalArgumentException("No customer with id " + row.getInt("customerId")));
         MovieCopy movieCopy = movieCopyService.findById(row.getInt("movieCopyId"))
             .orElseThrow(() -> new IllegalArgumentException("No movie copy with id " + row.getInt("movieCopyId")));
+        String rentalDate = row.getString("rentalDate");
+        String returnDate = row.getString("dueDate");
         RentalStatus status = RentalStatus.fromValue(row.getInt("status"));
-        return new Rental(rentalId, customer, movieCopy , status);
+        return new Rental(rentalId, customer, movieCopy, rentalDate, returnDate, status);
     }
 }

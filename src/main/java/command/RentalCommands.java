@@ -9,6 +9,8 @@ import rental.Rental;
 import rental.RentalService;
 import rental.RentalStatus;
 import ui.Screen;
+
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -39,11 +41,13 @@ public class RentalCommands {
             MovieCopy movieCopy = movieCopyService.findById(movieCopyId).orElseThrow(()-> new IllegalArgumentException("No movie copy with id " + movieCopyId));
 
             String rentalDate = MenuRunner.ask(form, "Rental Date");
+            LocalDate rentalDate2 = Rental.stringToLocalDate(rentalDate);
             String dueDate = MenuRunner.ask(form, "Due Date");
+            LocalDate returnDate = Rental.stringToLocalDate(dueDate);
             int status = Integer.parseInt(MenuRunner.ask(form, "Status"));
             RentalStatus rentalStatus = RentalStatus.fromValue(status);
 
-            Rental rental = new Rental(id, customer, movieCopy, rentalDate, dueDate, rentalStatus);
+            Rental rental = new Rental(id, customer, movieCopy, rentalDate2, returnDate, rentalStatus);
             rentalService().add(rental);
             log.info("Added " + rental.getLogView());
         } catch (NumberFormatException e) {

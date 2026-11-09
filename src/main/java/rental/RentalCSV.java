@@ -1,5 +1,6 @@
 package rental;
 
+import java.time.LocalDate;
 import java.util.*;
 import common.CsvMapping;
 import common.CsvRow;
@@ -53,8 +54,11 @@ public class RentalCSV implements  CsvMapping<Rental> {
         MovieCopy movieCopy = movieCopyService.findById(row.getInt("movieCopyId"))
             .orElseThrow(() -> new IllegalArgumentException("No movie copy with id " + row.getInt("movieCopyId")));
         String rentalDate = row.getString("rentalDate");
+        LocalDate rentalDate2 = Rental.stringToLocalDate(rentalDate);
         String returnDate = row.getString("dueDate");
+        LocalDate returnDate2 = Rental.stringToLocalDate(returnDate);
+        Rental.isOverdue(Rental.stringToLocalDate(returnDate));
         RentalStatus status = RentalStatus.fromValue(row.getInt("status"));
-        return new Rental(rentalId, customer, movieCopy, rentalDate, returnDate, status);
+        return new Rental(rentalId, customer, movieCopy, rentalDate2, returnDate2, status);
     }
 }

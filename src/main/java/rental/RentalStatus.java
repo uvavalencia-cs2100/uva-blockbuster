@@ -9,7 +9,6 @@ public enum RentalStatus {
     LOST(4);
   
     private final int value;
-
     RentalStatus(int value) {
         this.value = value;
     }
@@ -27,4 +26,5 @@ public enum RentalStatus {
         }
         throw new IllegalArgumentException("Unknown rental status value: " + value);
     }
+
 }

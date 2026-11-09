@@ -44,7 +44,7 @@ public class MenuOptions {
         rentalCommands =
                 List.of(
                         new Command('r', "Rent a Movie", RentalCommands::addRental),
-                        new Command('t', "Return a Movie", RentalCommands::showRental),
+                        new Command('t', "Show Rental", RentalCommands::showRental),
                         new Command('l', "List Rentals", RentalCommands::listRentals),
                         new Command('d', "Delete Rental", RentalCommands::deleteRental),
                         MenuRunner.BACK,

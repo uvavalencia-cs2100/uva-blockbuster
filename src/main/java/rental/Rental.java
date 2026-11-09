@@ -2,6 +2,7 @@ package rental;
 import common.Entity;
 import customer.Customer;
 import movie.MovieCopy;
+import movie.MovieStatus;
 
 import java.util.*;
 import java.time.LocalDate;
@@ -14,14 +15,14 @@ public final class Rental extends Entity{
     
     private Customer customer;
     private MovieCopy movieCopy;
-    private String rentalDate;
-    private String returnDate;
-    private RentalStatus rentalStatus;
+    private LocalDate rentalDate;
+    private LocalDate returnDate;
+    private static RentalStatus rentalStatus;
     
     
     
 
-    public Rental(int id, Customer customer, MovieCopy movieCopy, String rentalDate, String returnDate, RentalStatus rentalStatus){
+    public Rental(int id, Customer customer, MovieCopy movieCopy, LocalDate rentalDate, LocalDate returnDate, RentalStatus rentalStatus){
         super(id);
         setMovieCopy(movieCopy);
         setCustomer(customer);
@@ -49,6 +50,7 @@ public final class Rental extends Entity{
         return null; 
     }
 }
+
     
 
     public void setMovieCopy(MovieCopy movieCopy){
@@ -66,24 +68,24 @@ public final class Rental extends Entity{
         if(rentalStatus == null){
             throw new IllegalArgumentException("Rental status cannot be null");
         }
-        this.rentalStatus = rentalStatus;
+        Rental.rentalStatus = rentalStatus;
     }
 
      // sets the rental date and the return date to 14 days after the rental date
-    public void setRentalDate(String rentalDate) {
+    public void setRentalDate(LocalDate rentalDate) {
         if (rentalDate == null) {
             throw new IllegalArgumentException("Rental date cannot be null");
         }
-        this.rentalDate = rentalDate;
+        this.rentalDate = LocalDate.now();
         // this.returnDate = new LocalDate(rentalDate.getTime() + RENTAL_TIME);
     }
 
-    public void setReturnDate(String rentalDate){
+    public void setReturnDate(LocalDate returnDate){
         if (returnDate == null) {
-            throw new IllegalArgumentException("Rental date cannot be null");
+            throw new IllegalArgumentException("Return date cannot be null");
         }
-        LocalDate date = stringToLocalDate(rentalDate);
-        returnDate = dateToString(date.plusWeeks(2));
+        
+        returnDate = this.rentalDate.plusWeeks(2);
         
     }
 
@@ -96,15 +98,16 @@ public final class Rental extends Entity{
     }
 
     public MovieCopy getMovieCopy() {
+        
         return movieCopy;
     }
 
     // gets the rental date
-    public String getRentalDate() {
+    public LocalDate getRentalDate() {
         return rentalDate;
     }
 
-    public String getReturnDate(){
+    public LocalDate getReturnDate(){
         return returnDate;
     }
 
@@ -113,9 +116,26 @@ public final class Rental extends Entity{
     public static boolean isOverdue(LocalDate returnDate) {
         if (returnDate == null) {
             return false;
-        }
+        }else{
         LocalDate today = LocalDate.now();
+        Rental.rentalStatus = RentalStatus.fromValue(2);
         return today.isAfter(returnDate);
+    }
+ }
+
+    public void returnCopy(){
+        Rental.rentalStatus = RentalStatus.fromValue(3);
+        this.movieCopy.setStatus(MovieStatus.fromValue(1));
+    }
+
+    public void markLost(){
+        Rental.rentalStatus = RentalStatus.fromValue(4);
+        this.movieCopy.setStatus(MovieStatus.fromValue(4));
+    }
+
+    public void markReturned(){
+        Rental.rentalStatus = RentalStatus.fromValue(3);
+        this.movieCopy.setStatus(MovieStatus.fromValue(1));
     }
 
      @Override

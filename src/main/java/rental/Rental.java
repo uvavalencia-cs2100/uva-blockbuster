@@ -29,7 +29,7 @@ public final class Rental extends Entity{
         setRentalStatus(rentalStatus);
         setRentalDate(rentalDate);
         setReturnDate(rentalDate);
-
+        isOverdue(returnDate);
     }
 
     public static String dateToString(LocalDate date) {
@@ -113,13 +113,12 @@ public final class Rental extends Entity{
 
 
 
-    public static boolean isOverdue(LocalDate returnDate) {
-        if (returnDate == null) {
-            return false;
-        }else{
+    public void isOverdue(LocalDate returnDate) {
         LocalDate today = LocalDate.now();
+        if(today.isAfter(returnDate)){
         Rental.rentalStatus = RentalStatus.fromValue(2);
-        return today.isAfter(returnDate);
+        }
+        
     }
  }
 
@@ -161,7 +160,7 @@ public final class Rental extends Entity{
 
      @Override
     public String getSingleLineView() {
-        return String.format("Id: #%d, name: %s email: <%s>, Movie #%d: title='%s'", getId(), customer.getName(), customer.getEmail(), movieCopy.getMovie().getTitle());
+        return String.format("Id: #%d, name: %s email: <%s>, Movie: title='%s'", getId(), customer.getName(), customer.getEmail(), movieCopy.getMovie().getTitle());
     }
 
     @Override

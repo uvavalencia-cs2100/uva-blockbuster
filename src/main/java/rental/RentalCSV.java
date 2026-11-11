@@ -21,6 +21,7 @@ public class RentalCSV implements  CsvMapping<Rental> {
 
     private final CustomerService customerService;
     private final MovieCopyService movieCopyService;
+    private Rental rental;
 
     public RentalCSV(CustomerService customerService, MovieCopyService movieCopyService){
         this.movieCopyService = movieCopyService;
@@ -57,8 +58,10 @@ public class RentalCSV implements  CsvMapping<Rental> {
         LocalDate rentalDate2 = Rental.stringToLocalDate(rentalDate);
         String returnDate = row.getString("dueDate");
         LocalDate returnDate2 = Rental.stringToLocalDate(returnDate);
-        Rental.isOverdue(Rental.stringToLocalDate(returnDate));
+        //Rental.isOverdue(Rental.stringToLocalDate(returnDate));
         RentalStatus status = RentalStatus.fromValue(row.getInt("status"));
-        return new Rental(rentalId, customer, movieCopy, rentalDate2, returnDate2, status);
+        rental = new Rental(rentalId, customer, movieCopy, rentalDate2, returnDate2, status);
+        rental.isOverdue(returnDate2);
+        return rental;
     }
 }

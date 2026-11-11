@@ -1,6 +1,7 @@
 package command;
 
 import app.AppContext;
+import rental.Rental;
 
 import java.util.List;
 
@@ -42,9 +43,10 @@ public class MenuOptions {
 
         rentalCommands =
                 List.of(
-                        new Command('r', "Rent a Movie", MenuRunner::placeholder),
-                        new Command('t', "Return a Movie", MenuRunner::placeholder),
-                        new Command('l', "List Rentals", MenuRunner::placeholder),
+                        new Command('r', "Rent a Movie", RentalCommands::addRental),
+                        new Command('t', "Show Rental", RentalCommands::showRental),
+                        new Command('l', "List Rentals", RentalCommands::listRentals),
+                        new Command('d', "Delete Rental", RentalCommands::deleteRental),
                         MenuRunner.BACK,
                         MenuRunner.HELP);
 
@@ -77,7 +79,7 @@ public class MenuOptions {
                         new Command(
                                 'r',
                                 "Rental Options",
-                                () -> MenuRunner.runMenu("Rental Options", rentalCommands)),
+                                () -> MenuRunner.runMenu("Rental Options", rentalCommands, this::rentalStatus)),
                         MenuRunner.QUIT,
                         MenuRunner.HELP);
     }
@@ -92,6 +94,10 @@ public class MenuOptions {
 
     private String movieCopyStatus() {
         return "Movie Copies: " + AppContext.getInstance().getMovieCopyService().list().size();
+    }
+
+    private String rentalStatus() {
+        return "Rentals: " + AppContext.getInstance().getRentalService().list().size();
     }
 
     // Shows the main menu and runs until the user quits

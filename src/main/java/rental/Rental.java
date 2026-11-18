@@ -120,7 +120,7 @@ public final class Rental extends Entity{
         }
         
     }
- }
+ 
 
     public void returnCopy(){
         Rental.rentalStatus = RentalStatus.fromValue(3);

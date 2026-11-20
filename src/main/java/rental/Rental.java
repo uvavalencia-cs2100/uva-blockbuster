@@ -54,6 +54,9 @@ public final class Rental extends Entity{
     
 
     public void setMovieCopy(MovieCopy movieCopy){
+        if (movieCopy == null){
+            throw new IllegalArgumentException("Movie copy cannot be null");
+        }
         this.movieCopy = movieCopy;
     }
 
@@ -118,7 +121,6 @@ public final class Rental extends Entity{
         if(today.isAfter(returnDate)){
         Rental.rentalStatus = RentalStatus.fromValue(2);
         }
-        
     }
  
 

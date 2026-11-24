@@ -6,6 +6,8 @@ import customer.CustomerRepository;
 import customer.CustomerService;
 import movie.MovieRepository;
 import movie.MovieService;
+import rental.RentalRepository;
+import rental.RentalService;
 import movie.MovieCopyRepository;
 import movie.MovieCopyService;
 
@@ -21,6 +23,7 @@ public class AppContext {
     // Created on first use, once the config is final, because creating it loads the entities
     private CustomerService customerService;
     private MovieService movieService;
+    private RentalService rentalService;
     private MovieCopyService movieCopyService;
 
     private AppContext() {}
@@ -38,6 +41,7 @@ public class AppContext {
         getCustomerService(); 
         getMovieService(); 
         getMovieCopyService();
+        getRentalService();
     }
 
     public CustomerService getCustomerService() {
@@ -53,12 +57,19 @@ public class AppContext {
         }
         return movieService;
     }
-
+    
     public MovieCopyService getMovieCopyService() {
         if (movieCopyService == null) {
             movieCopyService = new MovieCopyService(new MovieCopyRepository(config.getDataPath(), getMovieService()));
         }
         return movieCopyService;
+    }
+
+    public RentalService getRentalService() {
+        if (rentalService == null) {
+            rentalService = new RentalService(new RentalRepository(config.getDataPath(), getCustomerService(), getMovieCopyService()));
+        }
+        return rentalService;
     }
 
     public AppConfig getConfig() {
@@ -76,5 +87,6 @@ public class AppContext {
         this.customerService = null;
         this.movieService = null;
         this.movieCopyService = null;
+        this.rentalService = null;
     }
 }
